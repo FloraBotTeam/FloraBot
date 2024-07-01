@@ -12,20 +12,20 @@ framework_address = "127.0.0.1:3000"
 administrator = 0
 
 flora_version = "1.0"
-plugins_dict = {}
-plugins_info_dict = {}
+plugins_dict = {}  # 插件对象字典
+plugins_info_dict = {}  # 插件信息字典
 
 
-def load_config():
+def load_config():  # 加载FloraBot配置文件函数
     global flora_host, flora_port, framework_address, administrator
-    if os.path.isfile("./Config.json"):
+    if os.path.isfile("./Config.json"):  # 若文件存在
         with open("./Config.json", "r", encoding="UTF-8") as read_flora_config:
             flora_config = json.loads(read_flora_config.read())
         flora_host = flora_config.get("FloraHost")
         flora_port = flora_config.get("FloraPort")
         framework_address = flora_config.get("FrameworkAddress")
         administrator = flora_config.get("Administrator")
-    else:
+    else:  # 若文件不存在
         print("FloraBot 启动失败, 未找到配置文件 Config.json")
         with open("./Config.json", "w", encoding="UTF-8") as write_flora_config:
             write_flora_config.write(json.dumps({"FloraHost": "127.0.0.1", "FloraPort": 3003, "FrameworkAddress": "127.0.0.1:3000", "Administrator": 0, "NameList": False}, ensure_ascii=False, indent=4))
@@ -33,65 +33,65 @@ def load_config():
         exit()
 
 
-def send_msg(msg: str, uid: str | int, gid: str | int | None, mid: str | int = None):
+def send_msg(msg: str, uid: str | int, gid: str | int | None, mid: str | int = None):  # 发送信息函数,msg: 正文,uid: QQ号,gid: 群号,mid: 消息编号
     url = f"http://{framework_address}"
     data = {}
-    if mid is not None:
+    if mid is not None:  # 当消息编号不为None时,则发送的消息为回复
         data.update({"message": f"[CQ:reply,id={mid}]{msg}"})
-    else:
+    else:  # 反之为普通消息
         data.update({"message": msg})
-    if gid is not None:
+    if gid is not None:  # 当群号不为None时,则发送给群聊
         url += "/send_group_msg"
         data.update({"group_id": gid})
-    else:
+    else:  # 反之为私聊
         url += "/send_private_msg"
         data.update({"user_id": uid})
     try:
-        requests.post(url, data=data, timeout=5)
+        requests.post(url, data=data, timeout=5)  # 提交发送消息
     except requests.exceptions.RequestException:
         pass
 
 
-def load_plugins():
+def load_plugins():  # 加载插件函数
     plugins_info_dict.clear()
-    for plugin in os.listdir("./FloraBot/Plugins"):
+    for plugin in os.listdir("./FloraBot/Plugins"):  # 遍历所有插件
         plugin_path = f"./FloraBot/Plugins/{plugin}"
         if os.path.isfile(f"{plugin_path}/Plugin.json"):
             with open(f"{plugin_path}/Plugin.json", "r", encoding="UTF-8") as read_plugin_config:
                 plugin_config = json.loads(read_plugin_config.read())
-            plugin_config.update({"ThePluginPath": plugin_path})
-            plugins_info_dict.update({plugin_config.get("PluginName"): plugin_config})
+            plugin_config.update({"ThePluginPath": plugin_path})  # 添加插件所在的相对路径
+            plugins_info_dict.update({plugin_config.get("PluginName"): plugin_config})  # 添加插件信息
     plugins_dict.clear()
     flora_api = {}
     flora_api.update(globals())
-    for plugin in os.listdir("./FloraBot/Plugins"):
+    for plugin in os.listdir("./FloraBot/Plugins"):  # 遍历所有插件
         plugin_path = f"./FloraBot/Plugins/{plugin}"
         if os.path.isfile(f"{plugin_path}/Plugin.json"):
             with open(f"{plugin_path}/Plugin.json", "r", encoding="UTF-8") as read_plugin_config:
                 plugin_config = json.loads(read_plugin_config.read())
-            if os.path.isfile(f"{plugin_path}/{plugin_config.get('MainPyName')}.py") and plugin_config.get("EnablePlugin"):
+            if os.path.isfile(f"{plugin_path}/{plugin_config.get('MainPyName')}.py") and plugin_config.get("EnablePlugin"):  # 如果配置正确则导入插件
                 flora_api.update({"ThePluginPath": plugin_path})
                 spec = importlib.util.spec_from_file_location(plugin_config.get("MainPyName"), f"./FloraBot/Plugins/{plugin}/{plugin_config.get('MainPyName')}.py")
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
-                module.flora_api = flora_api
-                threading.Thread(target=module.init).start()
-                plugins_dict.update({plugin_config.get("PluginName"): module})
+                module.flora_api = flora_api  # 传入API参数
+                threading.Thread(target=module.init).start()  # 开线程初始化插件
+                plugins_dict.update({plugin_config.get("PluginName"): module})  # 添加插件对象
 
 
-def update_flora_api():
+def update_flora_api():  # 更新API内容函数
     for plugin in plugins_dict.values():
         plugin.flora_api.update(globals())
 
 
 @flora_server.post("/")
-def process():
-    data = request.get_json()
+def process():  # 消息处理函数,不要主动调用这个函数
+    data = request.get_json()  # 获取提交数据
     uid = data.get('user_id')
     gid = data.get('group_id')
     mid = data.get('message_id')
-    msg = data.get('raw_message').replace("&#91;", "[").replace("&#93;", "]").replace("&amp;", "&").replace("&#44;", ",")
-    if uid == administrator:
+    msg = data.get('raw_message').replace("&#91;", "[").replace("&#93;", "]").replace("&amp;", "&").replace("&#44;", ",")  # 消息需要将URL编码替换到正确内容
+    if uid == administrator:  # 判断消息是否来自于管理员(主人)
         if msg == "重载插件":
             load_plugins()
             send_msg(f"FloraBot v{flora_version}\n\n插件重载完成, 共有 {len(plugins_info_dict)} 个插件, 已启用 {len(plugins_dict)} 个插件", uid, gid, mid)
@@ -143,7 +143,7 @@ def process():
                 send_msg(f"FloraBot v{flora_version}\n\n插件 {msg} 已禁用, 共有 {len(plugins_info_dict)} 个插件, 已启用 {len(plugins_dict)} 个插件", uid, gid, mid)
             else:
                 send_msg(f"FloraBot v{flora_version}\n\n未找到或已禁用插件 {msg} , 若未找到插件, 但插件文件已添加, 请试试使用 \"重载插件\"", uid, gid, mid)
-    for plugin in plugins_dict.values():
+    for plugin in plugins_dict.values():  # 遍历开线程调用所有的插件事件函数
         threading.Thread(target=plugin.event, args=(data,)).start()
     return "OK"
 
