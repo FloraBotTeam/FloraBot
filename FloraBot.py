@@ -5,6 +5,14 @@ import os
 import json
 import threading
 
+flora_logo = """
+███████╗ ██╗                          ██████╗
+██╔════╝ ██║                          ██╔══██╗           ██╗
+█████╗   ██║   ████╗   ████╗  ████╗   ██████╔╝  ████╗  ██████╗
+██╔══╝   ██║  ██╔═██╗ ██╔══╝ ██╔═██╗  ██╔══██╗ ██╔═██╗  ╚██╔═╝
+██║      ███╗ ╚████╔╝ ██║    ╚██████╗ ██████╔╝ ╚████╔╝   ███╗
+╚═╝      ╚══╝  ╚═══╝  ╚═╝     ╚═════╝ ╚═════╝   ╚═══╝    ╚══╝
+"""
 flora_server = Flask("FloraBot", template_folder="FloraBot", static_folder="FloraBot")
 flora_host = "127.0.0.1"
 flora_port = 3003
@@ -54,6 +62,7 @@ def send_msg(msg: str, uid: str | int, gid: str | int | None, mid: str | int = N
 
 
 def load_plugins():  # 加载插件函数
+    print("正在加载插件, 请稍后...\n")
     plugins_info_dict.clear()
     plugins_dict.clear()
     for plugin in os.listdir("./FloraBot/Plugins"):  # 遍历所有插件
@@ -94,6 +103,7 @@ def process():  # 消息处理函数,不要主动调用这个函数
         mid = data.get('message_id')
         msg = data.get('raw_message').replace("&#91;", "[").replace("&#93;", "]").replace("&amp;", "&").replace("&#44;", ",")  # 消息需要将URL编码替换到正确内容
         if msg == "重载插件":
+            send_msg("正在重载插件, 请稍后...", uid, gid, mid)
             load_plugins()
             send_msg(f"FloraBot {flora_version}\n\n插件重载完成, 共有 {len(plugins_info_dict)} 个插件, 已启用 {len(plugins_dict)} 个插件", uid, gid, mid)
         elif msg == "插件列表":
@@ -148,10 +158,13 @@ def process():  # 消息处理函数,不要主动调用这个函数
 
 
 if __name__ == "__main__":
+    print(flora_logo)
+    print("正在初始化 FloraBot , 请稍后...")
     if not os.path.isdir("./FloraBot"):
         os.makedirs("./FloraBot")
     if not os.path.isdir("./FloraBot/Plugins"):
         os.makedirs("./FloraBot/Plugins")
     load_config()
+    print(f"欢迎使用 FloraBot {flora_version}\n")
     load_plugins()
     flora_server.run(host=flora_host, port=flora_port)
