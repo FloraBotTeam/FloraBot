@@ -1,0 +1,8 @@
+{
+    "PluginName": "FloraBot插件模板",
+    "PluginIcon": null,
+    "PluginAuthor": "插件作者",
+    "MainPyName": "PluginTemplate",
+    "PluginDescription": "插件简介",
+    "EnablePlugin": true
+}
