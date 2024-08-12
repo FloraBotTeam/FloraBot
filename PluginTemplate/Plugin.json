@@ -1,5 +1,6 @@
 {
     "PluginName": "FloraBot插件模板",
+    "DependentLibraries": null,
     "PluginIcon": null,
     "PluginAuthor": "插件作者",
     "MainPyName": "PluginTemplate",
