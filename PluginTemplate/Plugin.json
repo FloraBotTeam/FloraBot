@@ -1,9 +1,10 @@
 {
-    "PluginName": "FloraBot插件模板",
+    "PluginName": "插件名",
     "DependentLibraries": null,
+    "IsLibraries": false,
     "PluginIcon": null,
     "PluginAuthor": "插件作者",
-    "MainPyName": "PluginTemplate",
-    "PluginDescription": "插件简介",
+    "MainPyName": "插件主 .py 文件名, 不要带上 .py 后缀名",
+    "PluginDescription": "插件描述",
     "EnablePlugin": true
 }

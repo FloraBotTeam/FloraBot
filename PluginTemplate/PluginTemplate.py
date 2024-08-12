@@ -15,7 +15,7 @@ def init():  # 插件初始化函数,在载入(若插件已设为禁用则不载
     print("FloraBot插件模板 加载成功")
 
 
-def api_update_event():  # 插件初始化函数,在API更新时会调用一次(若插件已设为禁用则不调用),可及时获得最新的API内容,无传入参数
+def api_update_event():  # 在API更新时会调用一次(若插件已设为禁用则不调用),可及时获得最新的API内容,无传入参数
     print(flora_api)
 
 
