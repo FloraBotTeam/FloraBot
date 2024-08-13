@@ -128,6 +128,13 @@ def api_update_event():  # 在API更新时会调用一次(若插件已设为禁�
 
 def event(data: dict):  # 事件函数,FloraBot每收到一个事件都会调用这个函数(若插件已设为禁用则不调用),传入原消息JSON参数
     print(data)
+    uid = data.get("user_id")  # 事件对象QQ号
+    gid = data.get("group_id")  # 事件对象群号
+    mid = data.get("message_id")  # 消息ID
+    msg = data.get("raw_message")  # 消息内容
+    if msg is not None:
+        msg = msg.replace("&#91;", "[").replace("&#93;", "]").replace("&amp;", "&").replace("&#44;", ",")  # 消息需要将URL编码替换到正确内容
+        print(uid, gid, mid, msg)
 ```
 **上面的注释已经很详细了**  
 **注意事项:**  
