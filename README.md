@@ -6,7 +6,7 @@
 apt install python3
 ```
 **可将 python3 改为一个指定的版本, 如作者喜欢用的 python3.11**  
-2. **点击右上角绿色的 `Code` 按钮, 再点击 `Download ZIP` 下载**  
+2. **点击右上角 About 左边的绿色的 `Code` 按钮, 再点击 `Download ZIP` 下载**  
 3. **用户解压后可删去 `PluginTemplate` 文件夹, 开发者可保留**  
 4. **如果是 Windows 用户, 在文件 `FloraBot.py` 的同级目录可创建一个文本文档, 内容为**  
 ```Shell
@@ -25,6 +25,17 @@ python3 FloraBot.py
 **使用 python3 命令不一定可以运行, 可改为一个指定的版本, 如 python3.11**  
 **运行脚本**  
 5. **首次启动会启动失败, 此时会在文件 `FloraBot.py` 的同级目录下生成一个 `Config.json` 文件, 编辑它**  
+**`Config.json`:**  
+```Json
+{
+    "AutoInstallLibraries": true,
+    "FloraHost": "127.0.0.1",
+    "FloraPort": 3003,
+    "FrameworkAddress": "127.0.0.1:3000",
+    "BotQQ": 0,
+    "Administrator": [0]
+}
+```
 **`Config.json` 文件键值对照表:**  
 * **`AutoInstallLibraries`: 是否自动安装 pip 安装所需的第三方库, 默认为: `true`**  
 * **`FloraHost`: Bot 监听的 IP 地址, 默认值为: `127.0.0.1`**  
