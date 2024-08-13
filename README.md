@@ -23,6 +23,16 @@ python.exe的绝对路径 FloraBot.py
 python3 FloraBot.py
 ```
 **使用 python3 命令不一定可以运行, 可改为一个指定的版本, 如 python3.11**  
+**安装必要的库:**  
+* **`flask`**
+```Shell
+pip install flask
+```
+* **`requests`**
+```Shell
+pip install flask
+```
+**使用 pip 命令不一定可以运行, 可尝试将 pip 换成 python3 -m pip**  
 **运行脚本**  
 5. **首次启动会启动失败, 此时会在文件 `FloraBot.py` 的同级目录下生成一个 `Config.json` 文件, 编辑它**  
 **`Config.json`:**  
