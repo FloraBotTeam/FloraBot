@@ -167,8 +167,15 @@ def event(data: dict):  # 事件函数,FloraBot每收到一个事件都会调用
 * **`ThePluginPath`: 插件对于 `FloraBot.py` 文件所在的目录的相对路径, 由于是将插件导入再调用的, 所以任何相对路径都是从 `FloraBot.py` 文件所在的目录开始的, 这非常重要, 不推荐使用自己手动定义到插件资源的相对路径, 而是推荐使用 `ThePluginPath` + 插件相对于资源的相对路径(因为可能会出现种种原因导致你手动定义到插件资源的相对路径不能正确使用插件文件夹中的文件), 示例: 我有一个叫做 Test.json 的文件, 在插件目录中的文件夹 Test 中(即 Test/Test.json), 那么获取 `ThePluginPath` 的值拼接到路径"/Test/Test.json"的前面即可获得 `FloraBot.py` 与该文件的相对路径, 现在就可以在插件中正确的使用这个文件了(希望不会那么拗口:) )**  
 **如果还是不能理解 `ThePluginPath` 的话, 直接上代码:**  
 ```Python
-with open(f"{flora_api.get('ThePluginPath')}/Plugin.json", "r", encoding="UTF-8") as plugin_config:
-    group_white_list = json.loads(plugin_config.read()).get("GroupWhiteList")
+import json
+
+group_white_list = []
+
+
+def init():
+    global group_white_list
+    with open(f"{flora_api.get('ThePluginPath')}/Plugin.json", "r", encoding="UTF-8") as plugin_config:
+        group_white_list = json.loads(plugin_config.read()).get("GroupWhiteList")
 ```
 **上述代码使用 `ThePluginPath` 拼接了当前插件配置文件的路径, 并且读取并获取了当中的 `GroupWhiteList` 键的值**  
 ### 推荐 QQ 框架
