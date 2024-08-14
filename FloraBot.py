@@ -61,7 +61,7 @@ def send_msg(msg: str, uid: str | int, gid: str | int | None, mid: str | int | N
         url += f"/send_private_msg"
         data.update({"user_id": uid})
     try:
-        requests.post(url, data=data, timeout=5)  # 提交发送消息
+        requests.post(url, json=data, timeout=5)  # 提交发送消息
     except requests.exceptions.RequestException:
         pass
 
