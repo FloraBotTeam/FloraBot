@@ -156,7 +156,7 @@ def process():  # 消息处理函数,不要主动调用这个函数
                     if not plugin_info.get("EnablePlugin"):
                         plugin_status = "禁用"
                     plugins += f"•{plugin_info.get('PluginName')}  [状态: {plugin_status}]\n"
-                plugins += f"\n共有 {len(plugins_info_dict)} 个插件, 已启用 {len(plugins_dict)} 个插件\n可使用 \"启用/禁用插件 + [插件名]\" 来启用或者禁用插件\n若未找到插件, 但插件文件已添加, 请试试使用 \"重载插件\""
+                plugins += f"\n共有 {len(plugins_info_dict)} 个插件, 已启用 {len(plugins_dict)} 个插件\n可使用 \"/启用/禁用插件 + [插件名]\" 来启用或者禁用插件\n若未找到插件, 但插件文件已添加, 请试试使用 \"/重载插件\""
                 send_msg(plugins, uid, gid, mid)
             elif msg.startswith("/启用插件 "):
                 msg = msg.replace("/启用插件 ", "", 1)
@@ -191,7 +191,7 @@ def process():  # 消息处理函数,不要主动调用这个函数
                         write_plugin_config.write(json.dumps(plugin_info_copy, ensure_ascii=False, indent=4))
                     send_msg(f"FloraBot {flora_version}\n\n插件 {msg} 已启用, 共有 {len(plugins_info_dict)} 个插件, 已启用 {len(plugins_dict)} 个插件", uid, gid, mid)
                 else:
-                    send_msg(f"FloraBot {flora_version}\n\n未找到或已启用插件 {msg} , 若未找到插件, 但插件文件已添加, 请试试使用 \"重载插件\"", uid, gid, mid)
+                    send_msg(f"FloraBot {flora_version}\n\n未找到或已启用插件 {msg} , 若未找到插件, 但插件文件已添加, 请试试使用 \"/重载插件\"", uid, gid, mid)
             elif msg.startswith("/禁用插件 "):
                 msg = msg.replace("/禁用插件 ", "", 1)
                 if plugins_info_dict.get(msg) is not None and plugins_info_dict.get(msg).get("EnablePlugin"):
@@ -207,7 +207,7 @@ def process():  # 消息处理函数,不要主动调用这个函数
                         write_plugin_config.write(json.dumps(plugin_info_copy, ensure_ascii=False, indent=4))
                     send_msg(f"FloraBot {flora_version}\n\n插件 {msg} 已禁用, 共有 {len(plugins_info_dict)} 个插件, 已启用 {len(plugins_dict)} 个插件", uid, gid, mid)
                 else:
-                    send_msg(f"FloraBot {flora_version}\n\n未找到或已禁用插件 {msg} , 若未找到插件, 但插件文件已添加, 请试试使用 \"重载插件\"", uid, gid, mid)
+                    send_msg(f"FloraBot {flora_version}\n\n未找到或已禁用插件 {msg} , 若未找到插件, 但插件文件已添加, 请试试使用 \"/重载插件\"", uid, gid, mid)
     for plugin in plugins_dict.values():  # 遍历开线程调用所有的插件事件函数
         try:
             threading.Thread(target=plugin.event, args=(data,)).start()
