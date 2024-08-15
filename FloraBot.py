@@ -208,6 +208,10 @@ def process():  # 消息处理函数,不要主动调用这个函数
                     send_msg(f"FloraBot {flora_version}\n\n插件 {msg} 已禁用, 共有 {len(plugins_info_dict)} 个插件, 已启用 {len(plugins_dict)} 个插件", uid, gid, mid)
                 else:
                     send_msg(f"FloraBot {flora_version}\n\n未找到或已禁用插件 {msg} , 若未找到插件, 但插件文件已添加, 请试试使用 \"/重载插件\"", uid, gid, mid)
+            elif msg.startswith("/echo "):
+                send_msg(msg.replace("/echo ", "", 1), uid, gid, mid)
+            elif msg.startswith("/echo1 "):
+                send_msg(msg.replace("/echo1 ", "", 1), uid, gid)
     for plugin in plugins_dict.values():  # 遍历开线程调用所有的插件事件函数
         try:
             threading.Thread(target=plugin.event, args=(data,)).start()
