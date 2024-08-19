@@ -177,7 +177,7 @@ group_white_list = []
 
 def init():
     global group_white_list
-    with open(f"{flora_api.get('ThePluginPath')}/Plugin.json", "r", encoding="UTF-8") as plugin_config:
+    with open(f"./{flora_api.get('ThePluginPath')}/Plugin.json", "r", encoding="UTF-8") as plugin_config:
         group_white_list = json.loads(plugin_config.read()).get("GroupWhiteList")
 ```
 **上述代码使用 `ThePluginPath` 拼接了当前插件配置文件的路径, 并且读取并获取了当中的 `GroupWhiteList` 键的值**  
@@ -207,9 +207,10 @@ def event(data: dict):  # 事件函数,FloraBot每收到一个事件都会调用
     if msg is not None:
         msg = msg.replace("&#91;", "[").replace("&#93;", "]").replace("&amp;", "&").replace("&#44;", ",")  # 消息需要将URL编码替换到正确内容
         if msg == "TestSendImage":
-            send_msg(f"[CQ:image,file=file:///{flora_api.get('FloraPath')}/{flora_api.get('ThePluginPath')}/Test.png,type=show,id=40004]", uid, gid, mid)
+            send_msg(f"[CQ:image,file=file:///{flora_api.get('FloraPath')}/{flora_api.get('ThePluginPath')}/Test.png]", uid, gid, mid)
 ```
 **上述代码发送图片时使用了 `FloraPath` 和 `ThePluginPath` 拼接了当前插件文件夹下的 Test.png 的绝对路径**  
+**注意!!!: 拼接路径请使用 `/` 而不是 `\` , 因为如果路径中出现了 `\` 则只能在 Windows 中使用, 而 `/` 则是全平台, Windows 支持使用 `/` 拼接路径**   
 ### 推荐 QQ 框架
 * **[NapNeko/NapCatQQ](https://github.com/NapNeko/NapCatQQ)**
 ### 作者
