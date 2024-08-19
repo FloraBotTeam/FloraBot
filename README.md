@@ -164,7 +164,11 @@ def event(data: dict):  # 事件函数,FloraBot每收到一个事件都会调用
 * **`FloraServer`: Bot 的 Flask 实例**  
 * **`UpdateFloraApi`: 更新 `flora_api` 的函数, 调用了会同时调用插件中的 `api_update_event` 函数, 无参数**  
 * **`LoadPlugins`: 加载/重载插件函数, 会调用 `UpdateFloraApi` 函数, 无参数**  
-* **`SendMsg`: 发送信息函数, 也可以发送事件, 只要你会 CQ 码, 参数: `msg`: 发送内容, 必填; `uid`: 发送对象 QQ 号, 若参数 `gid` 为空则为发送私聊 `gid`: 发送对象群号, 若不为空则为发送群聊 `mid`: 消息 ID ，若不为空则为回复**  
+* **`SendMsg`: 发送信息函数, 也可以发送事件, 只要你会 CQ 码, 参数: `msg`: 发送内容, 必填; `uid`: 发送对象 QQ 号, 若参数 `gid` 为空则为发送私聊 `gid`: 发送对象群号, 若不为空则为发送群聊 `mid`: 消息 ID ，若不为空则为回复**   
+**`SendMsg` 函数:**
+```Python
+send_msg(msg: str, uid: str | int, gid: str | int | None, mid: str | int | None = None):  # 发送信息函数,msg: 正文,uid: QQ号,gid: 群号,mid: 消息编号
+```
 * **`PluginsDict`: 插件对象字典, 使用对应的插件名获取, 并赋值给变量(或不赋值直接调用), 即可将对应的插件当作库来调用**  
 * **`PluginsInfoDict`: 插件信息字典, 使用对应的插件名获取, 可获取到对应插件的 `Plugin.json` 已转换为 Python 对象的内容**  
 * **`ThePluginPath`: 插件对于 `FloraBot.py` 文件所在的目录的相对路径, 由于是将插件导入再调用的, 所以任何相对路径都是从 `FloraBot.py` 文件所在的目录开始的, 这非常重要, 不推荐使用自己手动定义到插件资源的相对路径, 而是推荐使用 `ThePluginPath` + 插件相对于资源的相对路径(因为可能会出现种种原因导致你手动定义到插件资源的相对路径不能正确使用插件文件夹中的文件), 示例: 我有一个叫做 Test.json 的文件, 在插件目录中的文件夹 Test 中(即 Test/Test.json), 那么获取 `ThePluginPath` 的值拼接到路径"/Test/Test.json"的前面即可获得 `FloraBot.py` 与该文件的相对路径, 现在就可以在插件中正确的使用这个文件了(希望不会那么拗口:) )**  
