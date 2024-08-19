@@ -81,11 +81,11 @@ def load_plugins():  # 加载插件函数
     plugins_info_dict.clear()
     plugins_dict.clear()
     for plugin in os.listdir("./FloraBot/Plugins"):  # 遍历所有插件
-        plugin_path = f"./FloraBot/Plugins/{plugin}"
-        if os.path.isfile(f"{plugin_path}/Plugin.json"):
-            with open(f"{plugin_path}/Plugin.json", "r", encoding="UTF-8") as read_plugin_config:
+        plugin_path = f"FloraBot/Plugins/{plugin}"
+        if os.path.isfile(f"./{plugin_path}/Plugin.json"):
+            with open(f"./{plugin_path}/Plugin.json", "r", encoding="UTF-8") as read_plugin_config:
                 plugin_config = json.loads(read_plugin_config.read())
-            if os.path.isfile(f"{plugin_path}/{plugin_config.get('MainPyName')}.py") and plugin_config.get("EnablePlugin"):  # 如果配置正确则导入插件
+            if os.path.isfile(f"./{plugin_path}/{plugin_config.get('MainPyName')}.py") and plugin_config.get("EnablePlugin"):  # 如果配置正确则导入插件
                 plugin_config = plugin_config.copy()
                 print(f"正在加载插件 {plugin_config.get('PluginName')} ...")
                 plugin_config.update({"ThePluginPath": plugin_path})
@@ -94,7 +94,7 @@ def load_plugins():  # 加载插件函数
                     print("已开启自动安装依赖库, 正在安装插件所依赖的库...")
                     for libraries_name in plugin_config.get("DependentLibraries"):
                         install_libraries(libraries_name)
-                spec = importlib.util.spec_from_file_location(plugin_config.get("MainPyName"), f"./FloraBot/Plugins/{plugin}/{plugin_config.get('MainPyName')}.py")
+                spec = importlib.util.spec_from_file_location(plugin_config.get("MainPyName"), f"./{plugin_path}/{plugin_config.get('MainPyName')}.py")
                 module = importlib.util.module_from_spec(spec)
                 try:
                     spec.loader.exec_module(module)
@@ -164,7 +164,7 @@ def process():  # 消息处理函数,不要主动调用这个函数
                     plugin_info = plugins_info_dict.get(msg)
                     plugin_info.update({"EnablePlugin": True})
                     plugins_info_dict.update({msg: plugin_info})
-                    spec = importlib.util.spec_from_file_location(plugin_info.get("MainPyName"), f"{plugin_info.get('ThePluginPath')}/{plugin_info.get('MainPyName')}.py")
+                    spec = importlib.util.spec_from_file_location(plugin_info.get("MainPyName"), f"./{plugin_info.get('ThePluginPath')}/{plugin_info.get('MainPyName')}.py")
                     module = importlib.util.module_from_spec(spec)
                     try:
                         spec.loader.exec_module(module)
@@ -185,7 +185,7 @@ def process():  # 消息处理函数,不要主动调用这个函数
                         pass
                     plugins_dict.update({plugin_info.get("PluginName"): module})
                     update_flora_api()
-                    with open(f"{plugin_info.get('ThePluginPath')}/Plugin.json", "w", encoding="UTF-8") as write_plugin_config:
+                    with open(f"./{plugin_info.get('ThePluginPath')}/Plugin.json", "w", encoding="UTF-8") as write_plugin_config:
                         plugin_info_copy = plugin_info.copy()
                         plugin_info_copy.pop("ThePluginPath")
                         write_plugin_config.write(json.dumps(plugin_info_copy, ensure_ascii=False, indent=4))
@@ -201,7 +201,7 @@ def process():  # 消息处理函数,不要主动调用这个函数
                     if plugins_dict.get(msg) is not None:
                         plugins_dict.pop(msg)
                     update_flora_api()
-                    with open(f"{plugin_info.get('ThePluginPath')}/Plugin.json", "w", encoding="UTF-8") as write_plugin_config:
+                    with open(f"./{plugin_info.get('ThePluginPath')}/Plugin.json", "w", encoding="UTF-8") as write_plugin_config:
                         plugin_info_copy = plugin_info.copy()
                         plugin_info_copy.pop("ThePluginPath")
                         write_plugin_config.write(json.dumps(plugin_info_copy, ensure_ascii=False, indent=4))
