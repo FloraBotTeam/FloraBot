@@ -30,7 +30,7 @@ pip install flask
 ```
 * **`requests`**
 ```Shell
-pip install flask
+pip install requests
 ```
 **使用 pip 命令不一定可以运行, 可尝试将 pip 换成 python3 -m pip**  
 **运行脚本**  
