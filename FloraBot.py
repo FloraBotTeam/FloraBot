@@ -132,7 +132,7 @@ def update_flora_api():  # 更新API内容函数
             pass
 
 
-flora_api = {"FloraHost": flora_host, "FloraPort": flora_port, "FrameworkAddress": framework_address, "BotQQ": bot_qq, "Administrator": administrator, "FloraVersion": flora_version, "FloraServer": flora_server, "UpdateFloraApi": update_flora_api, "LoadPlugins": load_plugins, "SendMsg": send_msg}
+flora_api = {"FloraPath": os.path.dirname(os.path.abspath(__file__)), "FloraHost": flora_host, "FloraPort": flora_port, "FrameworkAddress": framework_address, "BotQQ": bot_qq, "Administrator": administrator, "FloraVersion": flora_version, "FloraServer": flora_server, "UpdateFloraApi": update_flora_api, "LoadPlugins": load_plugins, "SendMsg": send_msg}
 
 
 @flora_server.post("/")
