@@ -18,7 +18,7 @@ bot_qq = 0
 administrator = []
 auto_install = False
 
-flora_version = "v1.0"
+flora_version = "v1.01"
 plugins_dict = {}  # 插件对象字典
 plugins_info_dict = {}  # 插件信息字典
 
