@@ -154,6 +154,7 @@ def event(data: dict):  # 事件函数,FloraBot每收到一个事件都会调用
 * **`init` 函数里获取 API 内容的话, `PluginsDict` 和 `PluginsInfoDict` 还不是正确的, 推荐放到 `api_update_event` 函数中处理**  
 ## 插件API
 **这些在插件中都可以使用 `flora_api.get()` 获取到**  
+* **`FloraPath`: FloraBot.py 文件所在的绝对路径, 不是这个文件的路径, 而是所在目录**  
 * **`FloraHost`: Bot 监听的 IP 地址**  
 * **`FloraPort`: Bot 监听的端口号**  
 * **`FrameworkAddress`: QQ 框架的 Http 协议监听地址**  
@@ -180,6 +181,35 @@ def init():
         group_white_list = json.loads(plugin_config.read()).get("GroupWhiteList")
 ```
 **上述代码使用 `ThePluginPath` 拼接了当前插件配置文件的路径, 并且读取并获取了当中的 `GroupWhiteList` 键的值**  
+**另外, 如果你要发送图片等本地文件需要绝对路径可以这么写:**  
+```Python
+flora_api = {}
+
+
+def occupying_function(*values):  # 该函数仅用于占位,并没有任何意义
+    pass
+
+
+send_msg = occupying_function
+
+
+def init():
+    global send_msg
+    send_msg = flora_api.get("SendMsg")
+
+
+def event(data: dict):  # 事件函数,FloraBot每收到一个事件都会调用这个函数(若插件已设为禁用则不调用),传入原消息JSON参数
+    print(data)
+    uid = data.get("user_id")  # 事件对象QQ号
+    gid = data.get("group_id")  # 事件对象群号
+    mid = data.get("message_id")  # 消息ID
+    msg = data.get("raw_message")  # 消息内容
+    if msg is not None:
+        msg = msg.replace("&#91;", "[").replace("&#93;", "]").replace("&amp;", "&").replace("&#44;", ",")  # 消息需要将URL编码替换到正确内容
+        if msg == "TestSendImage":
+            send_msg(f"[CQ:image,file=file:///{flora_api.get('FloraPath')}/{flora_api.get('ThePluginPath')}/Test.png,type=show,id=40004]", uid, gid, mid)
+```
+**上述代码发送图片时使用了 `FloraPath` 和 `ThePluginPath` 拼接了当前插件文件夹下的 Test.png 的绝对路径**  
 ### 推荐 QQ 框架
 * **[NapNeko/NapCatQQ](https://github.com/NapNeko/NapCatQQ)**
 ### 作者
