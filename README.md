@@ -1,5 +1,7 @@
 # FloraBot
 **一个新的, 使用 Python 编写的支持插件的 QQBot**
+## 官方文档
+* **[https://florabotteam.github.io](https://florabotteam.github.io)**
 ## 食用方法(面向小白)
 1. **Windows: 前往 [`Python官网`](https://www.python.org/downloads) 下载不低于 `Python3.11` 的版本进行安装, Linux: 运行命令**
 ```Shell
