@@ -24,6 +24,11 @@ python3 FloraBot.py
 ```
 **使用 python3 命令不一定可以运行, 可改为一个指定的版本, 如 python3.11**  
 **安装必要的库:**  
+**若想一行指令安装所有必要库, 运行以下命令:**  
+```Shell
+pip install -r requirements.txt文件所在路径
+```
+**若使用手动安装, 则运行以下命令:**  
 * **`flask`**
 ```Shell
 pip install flask
