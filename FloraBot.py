@@ -18,17 +18,17 @@ connection_type = "HTTP"
 flora_host = "127.0.0.1"
 flora_port = 3003
 framework_address = "127.0.0.1:3000"
-bot_qq = 0
+bot_id = 0
 administrator = []
 auto_install = False
 
-flora_version = "v1.11"
+flora_version = "V1.11 Beta"
 plugins_dict = {}  # 插件对象字典
 plugins_info_dict = {}  # 插件信息字典
 
 
 def load_config():  # 加载FloraBot配置文件函数
-    global auto_install, connection_type, flora_host, flora_port, framework_address, bot_qq, administrator
+    global auto_install, connection_type, flora_host, flora_port, framework_address, bot_id, administrator
     if not os.path.isdir("./FloraBot"):
         os.makedirs("./FloraBot")
     if not os.path.isdir("./FloraBot/Plugins"):
@@ -45,14 +45,14 @@ def load_config():  # 加载FloraBot配置文件函数
         flora_api.update({"FloraPort": flora_port})
         framework_address = flora_config.get("FrameworkAddress")
         flora_api.update({"FrameworkAddress": framework_address})
-        bot_qq = flora_config.get("BotQQ")
-        flora_api.update({"BotQQ": bot_qq})
+        bot_id = flora_config.get("BotID")
+        flora_api.update({"BotID": bot_id})
         administrator = flora_config.get("Administrator")
         flora_api.update({"Administrator": administrator})
     else:  # 若文件不存在
         print("FloraBot 启动失败, 未找到配置文件 Config.json")
         with open("./Config.json", "w", encoding="UTF-8") as write_flora_config:
-            write_flora_config.write(json.dumps({"AutoInstallLibraries": True, "ConnectionType": "WebSocket", "FloraHost": "127.0.0.1", "FloraPort": 3003, "FrameworkAddress": "127.0.0.1:3000", "BotQQ": 0, "Administrator": [0]}, ensure_ascii=False, indent=4))
+            write_flora_config.write(json.dumps({"AutoInstallLibraries": True, "ConnectionType": "HTTP", "FloraHost": "127.0.0.1", "FloraPort": 3003, "FrameworkAddress": "127.0.0.1:3000", "BotQQ": 0, "Administrator": [0]}, ensure_ascii=False, indent=4))
         print("已生成一个新的配置文件 Config.json , 请修改后再次启动 FloraBot")
         exit()
 
@@ -198,7 +198,7 @@ def update_flora_api():  # 更新API内容函数
             pass
 
 
-flora_api = {"FloraPath": os.path.dirname(os.path.abspath(__file__)), "ConnectionType": connection_type, "FloraHost": flora_host, "FloraPort": flora_port, "FrameworkAddress": framework_address, "BotQQ": bot_qq, "Administrator": administrator, "FloraVersion": flora_version, "FloraServer": flora_server, "UpdateFloraApi": update_flora_api, "LoadPlugins": load_plugins, "BroadcastEvent": broadcast_event, "SendMsg": send_msg}
+flora_api = {"FloraPath": os.path.dirname(os.path.abspath(__file__)), "ConnectionType": connection_type, "FloraHost": flora_host, "FloraPort": flora_port, "FrameworkAddress": framework_address, "BotID": bot_id, "Administrator": administrator, "FloraVersion": flora_version, "FloraServer": flora_server, "UpdateFloraApi": update_flora_api, "LoadPlugins": load_plugins, "BroadcastEvent": broadcast_event, "SendMsg": send_msg}
 
 
 def builtin_function(msg: str, uid: str | int, gid: str | int | None, mid: str | int | None = None, send_type: str = "HTTP", ws_client=None, ws_server=None):  # 一些内置的功能
