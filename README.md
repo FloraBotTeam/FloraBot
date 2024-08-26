@@ -50,6 +50,7 @@ pip install websocket-server
 ```Json
 {
     "AutoInstallLibraries": true,
+    "ConnectionType": "HTTP",
     "FloraHost": "127.0.0.1",
     "FloraPort": 3003,
     "FrameworkAddress": "127.0.0.1:3000",
@@ -58,16 +59,22 @@ pip install websocket-server
 }
 ```
 **`Config.json` 文件键值对照表:**  
-* **`AutoInstallLibraries`: 是否自动安装 pip 安装所需的第三方库, 默认为: `true`**  
+* **`AutoInstallLibraries`: 是否自动安装 pip 安装所需的第三方库, 默认为值: `true`**  
+* **`ConnectionType`: Bot 与框架的连接方式, 可选 `HTTP` 和 `WebSocket`, 默认值为: `HTTP`**  
+**(Bot 只支持反向 WebSocket 呢)**  
 * **`FloraHost`: Bot 监听的 IP 地址, 默认值为: `127.0.0.1`**  
 * **`FloraPort`: Bot 监听的端口号, 默认值为: `3003`**  
-**(PS: Bot 只支持 Http 协议, 请在 QQ 框架中将 Http 上报打开并且添加上报地址为: `http://FloraHost:FloraPort`)**  
-* **`FrameworkAddress`: QQ 框架的 Http 协议监听地址, 格式为: `IP地址:端口号`, 默认值为: `127.0.0.1:3000`**  
-* **`BotQQ`: 登录的 Bot 账号的 QQ 号, 默认值为 `0`**  
-* **`Administrator`: 管理员/所有者/主人的 QQ 号列表, 一些特殊的功能需要该账号的 QQ 号在此列表内才能够触发, 格式为: `[QQ号, QQ号, ...]`, 默认值为: `[0]`**  
+**(Http 协议配置, 请在框架中将 Http 上报打开并且添加上报地址为: `http://FloraHost:FloraPort`)**  
+**(反向 WebSocket 协议配置, 请在框架中将 反向WebSocket 服务打开并且添加地址为: `ws://FloraHost:FloraPort`)**  
+* **`FrameworkAddress`: 框架的 Http 协议监听地址, 格式为: `IP地址:端口号`, 默认值为: `127.0.0.1:3000`**  
+* **`BotID`: 登录的 Bot 账号的 ID, 默认值为 `0`**  
+* **`Administrator`: 管理员/所有者/主人的 ID 列表, 一些特殊的功能需要该账号的 ID 在此列表内才能够触发, 格式为: `[ID, ID, ...]`, 默认值为: `[0]`**  
 6. **再次启动, 不出意外的话, 已经可以正常使用了**  
+## 注意
+**部分框架使用 WebSocket 协议进行连接, Bot 可能会警告 WebSocket 相关的问题, 如果能够正常收发消息请忽略, 如果不能则为框架的问题**    
 ## 框架配置
-**Bot 只支持 Http 协议, 框架需要把 Http 服务打开, 启用 Http 事件上报, 关闭 Http 心跳(一定要关, 不然会出现意想不到的 Bug), 然后在事件上报地址中添加 Bot 的监听地址, 如果有消息上报格式, 设置为 `CQ码` 即可**
+**Http 协议配置, 框架需要把 Http 服务打开, 启用 Http 事件上报, 关闭 Http 心跳(一定要关, 不然会出现意想不到的 Bug), 然后在事件上报地址中添加 Bot 的监听地址, 如果有消息上报格式, 设置为 `CQ码` 即可**  
+**WebSocket 协议配置, Bot 只支持反向 WebSocket , 所以框架应该配置反向 WebSocket 哦**  
 ## 添加插件
 ***声明: 插件为第三方内容, 请您自行分辨是否为恶意插件, 若被恶意插件入侵/破坏了您的设备或恶意盗取了您的信息, 造成的损失请自负, FloraBotTeam 概不负责也无义务负责!!!***  
 ***声明: 插件为第三方内容, 请您自行分辨是否为恶意插件, 若被恶意插件入侵/破坏了您的设备或恶意盗取了您的信息, 造成的损失请自负, FloraBotTeam 概不负责也无义务负责!!!***  
@@ -181,8 +188,8 @@ def event(data: dict):  # 事件函数,FloraBot每收到一个事件都会调用
 * **`FloraHost`: Bot 监听的 IP 地址**  
 * **`FloraPort`: Bot 监听的端口号**  
 * **`FrameworkAddress`: QQ 框架的 Http 协议监听地址**  
-* **`BotQQ`: 登录的 Bot 账号的 QQ 号**  
-* **`Administrator`: 管理员/所有者/主人的 QQ 号列表**  
+* **`BotID`: 登录的 Bot 账号的 ID**  
+* **`Administrator`: 管理员/所有者/主人的 ID 列表**  
 * **`FloraVersion`: Bot 的版本号**  
 * **`FloraServer`: Bot 的 Flask 实例**  
 * **`UpdateFloraApi`: 更新 `flora_api` 的函数, 调用了会同时调用插件中的 `api_update_event` 函数, 无参数**  
