@@ -39,6 +39,10 @@ pip install flask
 ```Shell
 pip install requests
 ```
+* **`websocket-server`**
+```Shell
+pip install websocket-server
+```
 **使用 pip 命令不一定可以运行, 可尝试将 pip 换成 python3 -m pip**  
 **运行脚本**  
 5. **首次启动会启动失败, 此时会在文件 `FloraBot.py` 的同级目录下生成一个 `Config.json` 文件, 编辑它**  
