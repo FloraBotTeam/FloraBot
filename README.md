@@ -54,7 +54,7 @@ pip install websocket-server
     "FloraHost": "127.0.0.1",
     "FloraPort": 3003,
     "FrameworkAddress": "127.0.0.1:3000",
-    "BotQQ": 0,
+    "BotID": 0,
     "Administrator": [0]
 }
 ```
