@@ -1,7 +1,7 @@
 # FloraBot
 **一个新的, 使用 Python 编写的支持插件的 ChatBot**
 ## 官方文档
-* **[https://florabotteam.github.io](https://florabotteam.github.io)**
+* **[`https://florabotteam.github.io`](https://florabotteam.github.io)**
 ## 一键安装脚本
 **[`https://github.com/FloraBotTeam/FloraBot-Installer`](https://github.com/FloraBotTeam/FloraBot-Installer)**
 ## 食用方法(面向小白)
