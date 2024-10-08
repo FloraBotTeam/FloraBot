@@ -27,7 +27,7 @@ administrator = []
 auto_install = False
 
 flora_version = "V1.12 Beta"
-big_update = True
+big_update = False
 
 plugins_dict = {}  # 插件对象字典
 plugins_info_dict = {}  # 插件信息字典
