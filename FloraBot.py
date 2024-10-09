@@ -28,6 +28,11 @@ auto_install = False
 
 flora_version = "V1.12 Beta"
 big_update = False
+update_content = """内置功能:
+1. /帮助  -  若不知道 FloraBot 有哪些功能, 请试试使用该指令
+2. 若不知道一个插件有哪些功能, 请试试使用该指令
+3. /检查更新  -  验性功能, 检查 FloraBot 是否有新的版本可更新, 并且引导你进行下一步更新
+4. /插件列表  -  将该指令移出仅 Bot 管理员可用指令"""
 
 plugins_dict = {}  # 插件对象字典
 plugins_info_dict = {}  # 插件信息字典
@@ -518,7 +523,12 @@ def admin_function(msg: str, uid: str | int, gid: str | int | None, mid: str | i
                         if get_version is not None:
                             get_version = get_version.group(1)
                             if get_version != flora_version:
-                                send_msg(send_type, f"检查到 FloraBot 有新的版本, 当前版本为 {flora_version}, 最新版本为 {get_version}", uid, gid, None, ws_client, ws_server, send_host, send_port)
+                                get_update_content = re.search(r'update_content\s*=\s*"""(.+?)"""', response.text)
+                                if get_update_content is not None:
+                                	get_update_content = get_update_content.group(1)
+                                else:
+                                	get_update_content = "None"
+                                send_msg(send_type, f"检查到 FloraBot 有新的版本, 当前版本为 {flora_version}, 最新版本为 {get_version}, 更新内容:\n{get_update_content}", uid, gid, None, ws_client, ws_server, send_host, send_port)
                                 is_big_update = re.search(r"\bbig_update\s*=\s*True\b", response.text)
                                 send_text = ""
                                 if is_big_update is not None:
