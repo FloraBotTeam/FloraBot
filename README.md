@@ -214,8 +214,8 @@ broadcast_event(data, "HTTP")
 ```Python
 broadcast_event(data, "WebSocket", ws_client, ws_server)
 ```
-* **`SendMsg`: 发送信息函数, 也可以发送事件, 只要你会 CQ 码, 参数如下方注释解释**   
-**`SendMsg` 函数:**
+* **`SendMsg`: 发送信息函数, 也可以发送事件, 只要你会 CQ 码, 参数如下方注释解释**  
+**`SendMsg` 函数:**  
 ```Python
 def send_msg(msg: str, uid: str | int, gid: str | int | None, mid: str | int | None = None, ws_client=None, ws_server=None, send_host: str = "", send_port: int | str = ""):
     # 发送消息函数,send_type: 发送类型,决定是用HTTP还是WebSocket发送消息
@@ -225,9 +225,23 @@ def send_msg(msg: str, uid: str | int, gid: str | int | None, mid: str | int | N
 ```
 **关于 `SendMsg` 的补充, 默认传入参数如下即可:**  
 ```Python
-send_msg(send_type, "正文", uid, gid, mid, ws_client, ws_server)
+send_msg(send_type, "正文", uid, gid, mid, ws_client, ws_server, send_host, send_port)
 ```
-**默认为回复信息, 如果不需要回复将参数 `mid` 改成 `None` 即可**  
+**默认为回复信息, 如果不需要回复将参数 `mid` 改成 `None` 即可, 调用了函数后会返回相应的信息(dict类型), 有需求可获取其中的数据(如获取该消息的 mid, 可用于撤回该消息)**  
+* **`CallApi`: 向框架调用 API, 会返回 dict 类型的数据, 参数与 `SendMse` 差不多, 函数如下:**  
+```Python
+def call_api(send_type: str, api: str, params: dict, ws_client=None, ws_server=None, send_host: str = "", send_port: int | str = ""):
+    # 发送消息函数,send_type: 发送类型,决定是用HTTP还是WebSocket发送消息
+    # api: 接口/终结点去掉"/"(str类型), data: 数据(dict类型)
+    # ws_client: WebSocket连接实例,ws_server: WebSocket服务端实例(若发送类型为WebSocket这两个参数必填)
+    # send_host: HTTP协议发送地址,send_port: HTTP协议发送端口(若填这两个参数则使用自定义地址发送)
+```
+**API(终结点) 以及该 API 的参数查阅 OneBot 文档调用, 调用了函数后会返回相应的信息(dict类型), 有需求可获取其中的数据, 以下是调用示范:**  
+```Python
+print(call_api(send_type, "API", {}, ws_client, ws_server, send_host, send_port))
+```
+* **`HelpInfoDict`: 所有插件包括 FloraBot 的帮助字典**  
+* **`CallApiReturned`: 调用框架 API 时, 如果为 WebSocket 协议, 这里将会记录返回的数据, 这个逻辑也相对的引出了新的 Bug, 当插件以 WebSocket 协议广播消息时, 若其他插件会发送消息或调用 API 时会等待 WebSocket 返回调用参数返回的数据, 因为是插件广播的, 所以会一直永远的等待下去, 若插件有这个需求, 还请查看源代码进行开发, 作者已经尽力了(一般绝对用不上, 要用请参考源代码)**  
 * **`PluginsDict`: 插件对象字典, 使用对应的插件名获取, 并赋值给变量(或不赋值直接调用), 即可将对应的插件当作库来调用**  
 * **`PluginsInfoDict`: 插件信息字典, 使用对应的插件名获取, 可获取到对应插件的 `Plugin.json` 已转换为 Python 对象的内容**  
 * **`ThePluginPath`: 插件对于 `FloraBot.py` 文件所在的目录的相对路径, 由于是将插件导入再调用的, 所以任何相对路径都是从 `FloraBot.py` 文件所在的目录开始的, 这非常重要, 不推荐使用自己手动定义到插件资源的相对路径, 而是推荐使用 `ThePluginPath` + 插件相对于资源的相对路径(因为可能会出现种种原因导致你手动定义到插件资源的相对路径不能正确使用插件文件夹中的文件), 示例: 我有一个叫做 Test.json 的文件, 在插件目录中的文件夹 Test 中(即 Test/Test.json), 那么获取 `ThePluginPath` 的值拼接到路径"/Test/Test.json"的前面即可获得 `FloraBot.py` 与该文件的相对路径, 现在就可以在插件中正确的使用这个文件了(希望不会那么拗口:) )**  
