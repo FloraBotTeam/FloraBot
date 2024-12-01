@@ -587,7 +587,7 @@ def admin_function(msg: str, uid: str | int, gid: str | int | None, mid: str | i
 @flora_server.post("/")
 def http_message_received():  # HTTP协议消息接收函数,不要主动调用这个函数
     data = request.get_json()  # 获取提交数据
-    threading.Thread(target=broadcast_event, args=(data, "HTTP"))  # 遍历开线程调用所有的插件事件函数
+    threading.Thread(target=broadcast_event, args=(data, "HTTP")).start()  # 遍历开线程调用所有的插件事件函数
     return "OK"
 
 
