@@ -208,11 +208,11 @@ def broadcast_event(data: dict, send_type: str, ws_client=None, ws_server=None, 
 **调用 `BroadcastEvent` 示例:**  
 **如果你希望其他插件能够将消息从你的插件中开启的 HTTP 发送消息, 你可以这么写:**  
 ```Python
-broadcast_event(data, "HTTP", None, None, "地址", "端口")
+broadcast_event(data, "HTTP")
 ```
 **WebSocket:**  
 ```Python
-broadcast_event(data, "WebSocket", "地址", "端口")
+broadcast_event(data, "WebSocket", ws_client, ws_server)
 ```
 * **`SendMsg`: 发送信息函数, 也可以发送事件, 只要你会 CQ 码, 参数如下方注释解释**   
 **`SendMsg` 函数:**
