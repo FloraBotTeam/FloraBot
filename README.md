@@ -228,7 +228,7 @@ def send_msg(msg: str, uid: str | int, gid: str | int | None, mid: str | int | N
 send_msg(send_type, "正文", uid, gid, mid, ws_client, ws_server, send_host, send_port)
 ```
 **默认为回复信息, 如果不需要回复将参数 `mid` 改成 `None` 即可, 调用了函数后会返回相应的信息(dict类型), 有需求可获取其中的数据(如获取该消息的 mid, 可用于撤回该消息)**  
-* **`CallApi`: 向框架调用 API, 会返回 dict 类型的数据, 参数与 `SendMse` 差不多, 函数如下:**  
+* **`CallApi`: 向框架调用 API, 会返回 dict 类型的数据, 参数与 `SendMsg` 差不多, 函数如下:**  
 ```Python
 def call_api(send_type: str, api: str, params: dict, ws_client=None, ws_server=None, send_host: str = "", send_port: int | str = ""):
     # 发送消息函数,send_type: 发送类型,决定是用HTTP还是WebSocket发送消息
