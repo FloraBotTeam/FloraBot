@@ -15,8 +15,25 @@ import random
 import re
 import zipfile
 import shutil
+from colorama import init as colorama_init
 
+
+def supports_color():  # 检测当前终端是否支持颜色输出
+    if "PYCHARM_HOSTED" in os.environ:
+        return True
+    if sys.platform == "win32":
+        return "ANSICON" in os.environ or "WT_SESSION" in os.environ or "TERM_PROGRAM" in os.environ
+    return hasattr(sys.stdout, "isatty") and sys.stdout.isatty()
+
+
+colorama_init()
 flora_logo = "\x1b[38;2;37;197;127m█\x1b[38;2;38;197;127m█\x1b[38;2;39;197;128m█\x1b[38;2;40;197;129m█\x1b[38;2;41;197;130m█\x1b[38;2;42;197;131m█\x1b[38;2;43;197;132m█\x1b[38;2;45;197;133m╗\x1b[38;2;46;197;134m \x1b[38;2;47;197;135m█\x1b[38;2;48;197;136m█\x1b[38;2;49;197;137m╗\x1b[38;2;50;197;138m \x1b[38;2;51;197;139m \x1b[38;2;53;197;140m \x1b[38;2;54;197;141m \x1b[38;2;55;197;142m \x1b[38;2;56;197;143m \x1b[38;2;57;197;144m \x1b[38;2;58;197;145m \x1b[38;2;59;197;146m \x1b[38;2;61;197;147m \x1b[38;2;62;197;148m \x1b[38;2;63;197;149m \x1b[38;2;64;197;150m \x1b[38;2;65;197;151m \x1b[38;2;66;197;152m \x1b[38;2;67;197;153m \x1b[38;2;69;197;154m \x1b[38;2;70;197;155m \x1b[38;2;71;197;156m \x1b[38;2;72;197;157m \x1b[38;2;73;197;158m \x1b[38;2;74;197;159m \x1b[38;2;76;197;160m \x1b[38;2;77;197;161m \x1b[38;2;78;197;162m \x1b[38;2;79;197;163m \x1b[38;2;80;197;164m█\x1b[38;2;81;197;165m█\x1b[38;2;82;197;166m█\x1b[38;2;84;197;167m█\x1b[38;2;85;197;168m█\x1b[38;2;86;197;169m█\x1b[38;2;87;197;170m╗\x1b[38;2;88;197;171m \x1b[38;2;89;197;172m \x1b[38;2;90;197;173m \x1b[38;2;92;197;174m \x1b[38;2;93;197;175m \x1b[38;2;94;197;176m \x1b[38;2;95;197;177m \x1b[38;2;96;197;178m \x1b[38;2;97;197;179m \x1b[38;2;98;197;180m \x1b[38;2;100;197;181m \x1b[38;2;101;197;182m \x1b[38;2;102;197;183m \x1b[38;2;103;197;184m \x1b[38;2;104;197;185m \x1b[38;2;105;197;186m \x1b[38;2;107;197;187m \x1b[0m\n\x1b[38;2;37;197;127m█\x1b[38;2;38;197;127m█\x1b[38;2;39;197;128m╔\x1b[38;2;40;197;129m═\x1b[38;2;41;197;130m═\x1b[38;2;42;197;131m═\x1b[38;2;43;197;132m═\x1b[38;2;45;197;133m╝\x1b[38;2;46;197;134m \x1b[38;2;47;197;135m█\x1b[38;2;48;197;136m█\x1b[38;2;49;197;137m║\x1b[38;2;50;197;138m \x1b[38;2;51;197;139m \x1b[38;2;53;197;140m \x1b[38;2;54;197;141m \x1b[38;2;55;197;142m \x1b[38;2;56;197;143m \x1b[38;2;57;197;144m \x1b[38;2;58;197;145m \x1b[38;2;59;197;146m \x1b[38;2;61;197;147m \x1b[38;2;62;197;148m \x1b[38;2;63;197;149m \x1b[38;2;64;197;150m \x1b[38;2;65;197;151m \x1b[38;2;66;197;152m \x1b[38;2;67;197;153m \x1b[38;2;69;197;154m \x1b[38;2;70;197;155m \x1b[38;2;71;197;156m \x1b[38;2;72;197;157m \x1b[38;2;73;197;158m \x1b[38;2;74;197;159m \x1b[38;2;76;197;160m \x1b[38;2;77;197;161m \x1b[38;2;78;197;162m \x1b[38;2;79;197;163m \x1b[38;2;80;197;164m█\x1b[38;2;81;197;165m█\x1b[38;2;82;197;166m╔\x1b[38;2;84;197;167m═\x1b[38;2;85;197;168m═\x1b[38;2;86;197;169m█\x1b[38;2;87;197;170m█\x1b[38;2;88;197;171m╗\x1b[38;2;89;197;172m \x1b[38;2;90;197;173m \x1b[38;2;92;197;174m \x1b[38;2;93;197;175m \x1b[38;2;94;197;176m \x1b[38;2;95;197;177m \x1b[38;2;96;197;178m \x1b[38;2;97;197;179m \x1b[38;2;98;197;180m \x1b[38;2;100;197;181m \x1b[38;2;101;197;182m \x1b[38;2;102;197;183m█\x1b[38;2;103;197;184m█\x1b[38;2;104;197;185m╗\x1b[38;2;105;197;186m \x1b[38;2;107;197;187m \x1b[0m\n\x1b[38;2;37;197;127m█\x1b[38;2;38;197;127m█\x1b[38;2;39;197;128m█\x1b[38;2;40;197;129m█\x1b[38;2;41;197;130m█\x1b[38;2;42;197;131m╗\x1b[38;2;43;197;132m \x1b[38;2;45;197;133m \x1b[38;2;46;197;134m \x1b[38;2;47;197;135m█\x1b[38;2;48;197;136m█\x1b[38;2;49;197;137m║\x1b[38;2;50;197;138m \x1b[38;2;51;197;139m \x1b[38;2;53;197;140m \x1b[38;2;54;197;141m█\x1b[38;2;55;197;142m█\x1b[38;2;56;197;143m█\x1b[38;2;57;197;144m█\x1b[38;2;58;197;145m╗\x1b[38;2;59;197;146m \x1b[38;2;61;197;147m \x1b[38;2;62;197;148m \x1b[38;2;63;197;149m█\x1b[38;2;64;197;150m█\x1b[38;2;65;197;151m█\x1b[38;2;66;197;152m█\x1b[38;2;67;197;153m╗\x1b[38;2;69;197;154m \x1b[38;2;70;197;155m \x1b[38;2;71;197;156m█\x1b[38;2;72;197;157m█\x1b[38;2;73;197;158m█\x1b[38;2;74;197;159m█\x1b[38;2;76;197;160m╗\x1b[38;2;77;197;161m \x1b[38;2;78;197;162m \x1b[38;2;79;197;163m \x1b[38;2;80;197;164m█\x1b[38;2;81;197;165m█\x1b[38;2;82;197;166m█\x1b[38;2;84;197;167m█\x1b[38;2;85;197;168m█\x1b[38;2;86;197;169m█\x1b[38;2;87;197;170m╔\x1b[38;2;88;197;171m╝\x1b[38;2;89;197;172m \x1b[38;2;90;197;173m \x1b[38;2;92;197;174m█\x1b[38;2;93;197;175m█\x1b[38;2;94;197;176m█\x1b[38;2;95;197;177m█\x1b[38;2;96;197;178m╗\x1b[38;2;97;197;179m \x1b[38;2;98;197;180m \x1b[38;2;100;197;181m█\x1b[38;2;101;197;182m█\x1b[38;2;102;197;183m█\x1b[38;2;103;197;184m█\x1b[38;2;104;197;185m█\x1b[38;2;105;197;186m█\x1b[38;2;107;197;187m╗\x1b[0m\n\x1b[38;2;37;197;127m█\x1b[38;2;38;197;127m█\x1b[38;2;39;197;128m╔\x1b[38;2;40;197;129m═\x1b[38;2;41;197;130m═\x1b[38;2;42;197;131m╝\x1b[38;2;43;197;132m \x1b[38;2;45;197;133m \x1b[38;2;46;197;134m \x1b[38;2;47;197;135m█\x1b[38;2;48;197;136m█\x1b[38;2;49;197;137m║\x1b[38;2;50;197;138m \x1b[38;2;51;197;139m \x1b[38;2;53;197;140m█\x1b[38;2;54;197;141m█\x1b[38;2;55;197;142m╔\x1b[38;2;56;197;143m═\x1b[38;2;57;197;144m█\x1b[38;2;58;197;145m█\x1b[38;2;59;197;146m╗\x1b[38;2;61;197;147m \x1b[38;2;62;197;148m█\x1b[38;2;63;197;149m█\x1b[38;2;64;197;150m╔\x1b[38;2;65;197;151m═\x1b[38;2;66;197;152m═\x1b[38;2;67;197;153m╝\x1b[38;2;69;197;154m \x1b[38;2;70;197;155m█\x1b[38;2;71;197;156m█\x1b[38;2;72;197;157m╔\x1b[38;2;73;197;158m═\x1b[38;2;74;197;159m█\x1b[38;2;76;197;160m█\x1b[38;2;77;197;161m╗\x1b[38;2;78;197;162m \x1b[38;2;79;197;163m \x1b[38;2;80;197;164m█\x1b[38;2;81;197;165m█\x1b[38;2;82;197;166m╔\x1b[38;2;84;197;167m═\x1b[38;2;85;197;168m═\x1b[38;2;86;197;169m█\x1b[38;2;87;197;170m█\x1b[38;2;88;197;171m╗\x1b[38;2;89;197;172m \x1b[38;2;90;197;173m█\x1b[38;2;92;197;174m█\x1b[38;2;93;197;175m╔\x1b[38;2;94;197;176m═\x1b[38;2;95;197;177m█\x1b[38;2;96;197;178m█\x1b[38;2;97;197;179m╗\x1b[38;2;98;197;180m \x1b[38;2;100;197;181m \x1b[38;2;101;197;182m╚\x1b[38;2;102;197;183m█\x1b[38;2;103;197;184m█\x1b[38;2;104;197;185m╔\x1b[38;2;105;197;186m═\x1b[38;2;107;197;187m╝\x1b[0m\n\x1b[38;2;37;197;127m█\x1b[38;2;38;197;127m█\x1b[38;2;39;197;128m║\x1b[38;2;40;197;129m \x1b[38;2;41;197;130m \x1b[38;2;42;197;131m \x1b[38;2;43;197;132m \x1b[38;2;45;197;133m \x1b[38;2;46;197;134m \x1b[38;2;47;197;135m█\x1b[38;2;48;197;136m█\x1b[38;2;49;197;137m█\x1b[38;2;50;197;138m╗\x1b[38;2;51;197;139m \x1b[38;2;53;197;140m╚\x1b[38;2;54;197;141m█\x1b[38;2;55;197;142m█\x1b[38;2;56;197;143m█\x1b[38;2;57;197;144m█\x1b[38;2;58;197;145m╔\x1b[38;2;59;197;146m╝\x1b[38;2;61;197;147m \x1b[38;2;62;197;148m█\x1b[38;2;63;197;149m█\x1b[38;2;64;197;150m║\x1b[38;2;65;197;151m \x1b[38;2;66;197;152m \x1b[38;2;67;197;153m \x1b[38;2;69;197;154m \x1b[38;2;70;197;155m╚\x1b[38;2;71;197;156m█\x1b[38;2;72;197;157m█\x1b[38;2;73;197;158m█\x1b[38;2;74;197;159m█\x1b[38;2;76;197;160m█\x1b[38;2;77;197;161m█\x1b[38;2;78;197;162m╗\x1b[38;2;79;197;163m \x1b[38;2;80;197;164m█\x1b[38;2;81;197;165m█\x1b[38;2;82;197;166m█\x1b[38;2;84;197;167m█\x1b[38;2;85;197;168m█\x1b[38;2;86;197;169m█\x1b[38;2;87;197;170m╔\x1b[38;2;88;197;171m╝\x1b[38;2;89;197;172m \x1b[38;2;90;197;173m╚\x1b[38;2;92;197;174m█\x1b[38;2;93;197;175m█\x1b[38;2;94;197;176m█\x1b[38;2;95;197;177m█\x1b[38;2;96;197;178m╔\x1b[38;2;97;197;179m╝\x1b[38;2;98;197;180m \x1b[38;2;100;197;181m \x1b[38;2;101;197;182m \x1b[38;2;102;197;183m█\x1b[38;2;103;197;184m█\x1b[38;2;104;197;185m█\x1b[38;2;105;197;186m╗\x1b[38;2;107;197;187m \x1b[0m\n\x1b[38;2;37;197;127m╚\x1b[38;2;38;197;127m═\x1b[38;2;39;197;128m╝\x1b[38;2;40;197;129m \x1b[38;2;41;197;130m \x1b[38;2;42;197;131m \x1b[38;2;43;197;132m \x1b[38;2;45;197;133m \x1b[38;2;46;197;134m \x1b[38;2;47;197;135m╚\x1b[38;2;48;197;136m═\x1b[38;2;49;197;137m═\x1b[38;2;50;197;138m╝\x1b[38;2;51;197;139m \x1b[38;2;53;197;140m \x1b[38;2;54;197;141m╚\x1b[38;2;55;197;142m═\x1b[38;2;56;197;143m═\x1b[38;2;57;197;144m═\x1b[38;2;58;197;145m╝\x1b[38;2;59;197;146m \x1b[38;2;61;197;147m \x1b[38;2;62;197;148m╚\x1b[38;2;63;197;149m═\x1b[38;2;64;197;150m╝\x1b[38;2;65;197;151m \x1b[38;2;66;197;152m \x1b[38;2;67;197;153m \x1b[38;2;69;197;154m \x1b[38;2;70;197;155m \x1b[38;2;71;197;156m╚\x1b[38;2;72;197;157m═\x1b[38;2;73;197;158m═\x1b[38;2;74;197;159m═\x1b[38;2;76;197;160m═\x1b[38;2;77;197;161m═\x1b[38;2;78;197;162m╝\x1b[38;2;79;197;163m \x1b[38;2;80;197;164m╚\x1b[38;2;81;197;165m═\x1b[38;2;82;197;166m═\x1b[38;2;84;197;167m═\x1b[38;2;85;197;168m═\x1b[38;2;86;197;169m═\x1b[38;2;87;197;170m╝\x1b[38;2;88;197;171m \x1b[38;2;89;197;172m \x1b[38;2;90;197;173m \x1b[38;2;92;197;174m╚\x1b[38;2;93;197;175m═\x1b[38;2;94;197;176m═\x1b[38;2;95;197;177m═\x1b[38;2;96;197;178m╝\x1b[38;2;97;197;179m \x1b[38;2;98;197;180m \x1b[38;2;100;197;181m \x1b[38;2;101;197;182m \x1b[38;2;102;197;183m╚\x1b[38;2;103;197;184m═\x1b[38;2;104;197;185m═\x1b[38;2;105;197;186m╝\x1b[38;2;107;197;187m \x1b[0m\n"
+use_ansi_color = supports_color()
+if not use_ansi_color:
+    flora_logo = re.compile(r"\x1B[@-_][0-?]*[ -/]*[@-~]").sub("", flora_logo)
+    ansi_color = False
+    print("当前终端不支持使用 ANSI 转义符字体变色\n")
+
 flora_server = Flask("FloraBot", template_folder="FloraBot", static_folder="FloraBot")
 connection_type = "HTTP"
 flora_host = "127.0.0.1"
@@ -26,11 +43,13 @@ bot_id = 0
 administrator = []
 auto_install = False
 
-flora_version = "V1.12 Beta"
+flora_version = "V1.12"
 big_update = False
-update_content = """内置功能:
+update_content = """修复 BUG:
+修复了 HTTP 协议下无法正常接收消息的问题
+内置功能:
 1. /帮助  -  若不知道 FloraBot 有哪些功能, 请试试使用该指令
-2. 若不知道一个插件有哪些功能, 请试试使用该指令
+2. /帮助 + [空格] + [插件名]  -  若不知道一个插件有哪些功能, 请试试使用该指令
 3. /检查更新  -  验性功能, 检查 FloraBot 是否有新的版本可更新, 并且引导你进行下一步更新
 4. /插件列表  -  将该指令移出仅 Bot 管理员可用指令"""
 
@@ -140,7 +159,7 @@ def load_config():  # 加载FloraBot配置文件函数
     else:  # 若文件不存在
         print("FloraBot 启动失败, 未找到配置文件 Config.json")
         with open("./Config.json", "w", encoding="UTF-8") as write_flora_config:
-            write_flora_config.write(json.dumps({"AutoInstallLibraries": True, "ConnectionType": "HTTP", "FloraHost": "127.0.0.1", "FloraPort": 3003, "FrameworkAddress": "127.0.0.1:3000", "BotQQ": 0, "Administrator": [0]}, ensure_ascii=False, indent=4))
+            write_flora_config.write(json.dumps({"AutoInstallLibraries": True, "ConnectionType": "HTTP", "FloraHost": "127.0.0.1", "FloraPort": 3003, "FrameworkAddress": "127.0.0.1:3000", "BotID": 0, "Administrator": [0]}, ensure_ascii=False, indent=4))
         print("已生成一个新的配置文件 Config.json , 请修改后再次启动 FloraBot")
         exit()
 
@@ -167,7 +186,7 @@ def send_msg(send_type: str, msg: str, uid: str | int, gid: str | int | None, mi
             url += f"/send_private_msg"
             data.update({"user_id": uid})
         try:
-            return requests.post(url, json=data, timeout=5).json()  # 提交发送消息
+            return requests.post(url, json=data).json()  # 提交发送消息
         except requests.exceptions.RequestException:
             pass
     elif send_type == "WebSocket":
@@ -213,7 +232,7 @@ def call_api(send_type: str, api: str, params: dict, ws_client=None, ws_server=N
         if send_host != "" and send_port != "":
             send_address = f"{send_host}:{send_port}"
         try:
-            return requests.post(f"http://{send_address}/{api}", json=params, timeout=5).json()  # 提交发送消息
+            return requests.post(f"http://{send_address}/{api}", json=params).json()  # 提交发送消息
         except requests.exceptions.RequestException:
             return None
     elif send_type == "WebSocket":
@@ -344,7 +363,7 @@ def builtin_function(data: dict, send_type: str = "HTTP", ws_client=None, ws_ser
             send_msg(send_type, send_text, uid, gid, mid, ws_client, ws_server, send_host, send_port)
         elif msg.startswith("/帮助 "):
             msg = msg.replace("/帮助 ", "", 1)
-            if msg in help_info_dict.get("Plugins"):
+            if help_info_dict.get("Plugins") is not None and msg in help_info_dict.get("Plugins"):
                 send_text = f"FloraBot {flora_version}\n\n帮助菜单:\n{msg}:"
                 for help_class in help_info_dict.get("Plugins").get(msg).get("Help"):
                     if help_class.get("AdminUse") is not None and help_class.get("AdminUse") and uid not in administrator:
@@ -525,9 +544,9 @@ def admin_function(msg: str, uid: str | int, gid: str | int | None, mid: str | i
                             if get_version != flora_version:
                                 get_update_content = re.search(r'update_content\s*=\s*"""(.+?)"""', response.text)
                                 if get_update_content is not None:
-                                	get_update_content = get_update_content.group(1)
+                                    get_update_content = get_update_content.group(1)
                                 else:
-                                	get_update_content = "None"
+                                    get_update_content = "未获取到更新日志"
                                 send_msg(send_type, f"检查到 FloraBot 有新的版本, 当前版本为 {flora_version}, 最新版本为 {get_version}, 更新内容:\n{get_update_content}", uid, gid, None, ws_client, ws_server, send_host, send_port)
                                 is_big_update = re.search(r"\bbig_update\s*=\s*True\b", response.text)
                                 send_text = ""
@@ -567,9 +586,12 @@ def admin_function(msg: str, uid: str | int, gid: str | int | None, mid: str | i
                 for file in zip_object.namelist():
                     zip_object.extract(file, "./FloraBot/UpdateCache")
                 zip_object.close()
+                os.remove("./FloraBot/UpdateCache/FloraBot.zip")
+                shutil.rmtree(f"./FloraBot/UpdateCache/FloraBot-main/PluginTemplate")
                 send_msg(send_type, "FloraBot 解压完成, 开始更新依赖的库...", uid, gid, None, ws_client, ws_server, send_host, send_port)
                 try:
                     subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "./FloraBot/UpdateCache/FloraBot-main/requirements.txt"])
+                    os.remove("./FloraBot/UpdateCache/FloraBot-main/requirements.txt")
                     send_msg(send_type, "依赖的库更新完成, 开始替换更新 FloraBot, 这将会重启 FloraBot, FloraBot 重启后即为更新完成", uid, gid, None, ws_client, ws_server, send_host, send_port)
                 except subprocess.CalledProcessError:
                     send_msg(send_type, "依赖的库更新失败, 跳过更新依赖的库, 开始替换更新 FloraBot, 这将会重启 FloraBot, FloraBot 重启后即为更新完成", uid, gid, None, ws_client, ws_server, send_host, send_port)
@@ -587,7 +609,7 @@ def admin_function(msg: str, uid: str | int, gid: str | int | None, mid: str | i
 @flora_server.post("/")
 def http_message_received():  # HTTP协议消息接收函数,不要主动调用这个函数
     data = request.get_json()  # 获取提交数据
-    threading.Thread(target=broadcast_event, args=(data, "HTTP"))  # 遍历开线程调用所有的插件事件函数
+    threading.Thread(target=broadcast_event, args=(data, "HTTP")).start()  # 遍历开线程调用所有的插件事件函数
     return "OK"
 
 
@@ -715,7 +737,10 @@ if __name__ == "__main__":
     print("正在初始化 FloraBot , 请稍后...")
     load_config()
     print(f"欢迎使用 FloraBot {flora_version}")
-    print("\033[93m声明: 插件为第三方内容, 请您自行分辨是否为恶意插件, 若被恶意插件入侵/破坏了您的设备或恶意盗取了您的信息, 造成的损失请自负, FloraBotTeam 概不负责也无义务负责!!!\033[0m")
+    if use_ansi_color:
+        print("\033[93m声明: 插件为第三方内容, 请您自行分辨是否为恶意插件, 若被恶意插件入侵/破坏了您的设备或恶意盗取了您的信息, 造成的损失请自负, FloraBotTeam 概不负责也无义务负责!!!\033[0m")
+    else:
+        print("声明: 插件为第三方内容, 请您自行分辨是否为恶意插件, 若被恶意插件入侵/破坏了您的设备或恶意盗取了您的信息, 造成的损失请自负, FloraBotTeam 概不负责也无义务负责!!!")
     load_plugins()
     print(f"框架连接方式为: {connection_type}")
     if connection_type == "HTTP":
