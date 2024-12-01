@@ -26,7 +26,7 @@ bot_id = 0
 administrator = []
 auto_install = False
 
-flora_version = "V1.12 Beta"
+flora_version = "V1.12"
 big_update = False
 update_content = """内置功能:
 1. /帮助  -  若不知道 FloraBot 有哪些功能, 请试试使用该指令
