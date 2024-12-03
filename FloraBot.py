@@ -269,6 +269,7 @@ def load_plugins():  # 加载插件函数
     print("正在加载插件, 请稍后...")
     help_info_dict.clear()
     help_info_dict.update(flora_help_dict)
+    plugins_help_info_dict = {}
     plugins_info_dict.clear()
     plugins_dict.clear()
     for plugin in os.listdir("./FloraBot/Plugins"):  # 遍历所有插件
@@ -282,7 +283,7 @@ def load_plugins():  # 加载插件函数
                 plugin_config.update({"ThePluginPath": plugin_path})
                 plugins_info_dict.update({plugin_config.get("PluginName"): plugin_config})  # 添加插件信息
                 if plugin_config.get("Help") is not None:
-                    help_info_dict.update({"Plugins": {plugin_config.get("PluginName"): {"Help": plugin_config.get("Help")}}})
+                    plugins_help_info_dict.update({plugin_config.get("PluginName"): {"Help": plugin_config.get("Help")}})
                 if auto_install and plugin_config.get("DependentLibraries") is not None:
                     print("已开启自动安装依赖库, 正在安装插件所依赖的库...")
                     for libraries_name in plugin_config.get("DependentLibraries"):
@@ -307,6 +308,7 @@ def load_plugins():  # 加载插件函数
                 except AttributeError:
                     pass
                 plugins_dict.update({plugin_config.get("PluginName"): module})  # 添加插件对象
+    help_info_dict.update({"Plugins": plugins_help_info_dict})
     update_flora_api()
 
 
@@ -726,6 +728,10 @@ def client_left(client, server):
         call_api_return.clear()
         call_api_returned.clear()
         print(f"框架已从 WebSocket 连接断开, 连接ID: {client.get('id')}")
+
+
+def reboot():
+    pass
 
 
 flora_api = {"FloraPath": os.path.dirname(os.path.abspath(__file__)), "ConnectionType": connection_type, "FloraHost": flora_host, "FloraPort": flora_port, "FrameworkAddress": framework_address, "BotID": bot_id, "Administrator": administrator, "FloraVersion": flora_version, "FloraServer": flora_server, "CallApiReturned": call_api_returned, "UpdateFloraApi": update_flora_api, "LoadPlugins": load_plugins, "BroadcastEvent": broadcast_event, "SendMsg": send_msg, "CallApi": call_api}
