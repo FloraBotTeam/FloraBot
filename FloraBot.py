@@ -43,15 +43,11 @@ bot_id = 0
 administrator = []
 auto_install = False
 
-flora_version = "V1.12"
+flora_version = "V1.14"
 big_update = False
-update_content = """修复 BUG:
-修复了 HTTP 协议下无法正常接收消息的问题
-内置功能:
-1. /帮助  -  若不知道 FloraBot 有哪些功能, 请试试使用该指令
-2. /帮助 + [空格] + [插件名]  -  若不知道一个插件有哪些功能, 请试试使用该指令
-3. /检查更新  -  验性功能, 检查 FloraBot 是否有新的版本可更新, 并且引导你进行下一步更新
-4. /插件列表  -  将该指令移出仅 Bot 管理员可用指令"""
+update_content = """船新版本:
+修改内置功能为群内@触发如：@FloraBot /帮助
+插件若想使用请查看文档修改相关代码"""
 
 plugins_dict = {}  # 插件对象字典
 plugins_info_dict = {}  # 插件信息字典
@@ -159,12 +155,15 @@ def load_config():  # 加载FloraBot配置文件函数
     else:  # 若文件不存在
         print("FloraBot 启动失败, 未找到配置文件 Config.json")
         with open("./Config.json", "w", encoding="UTF-8") as write_flora_config:
-            write_flora_config.write(json.dumps({"AutoInstallLibraries": True, "ConnectionType": "HTTP", "FloraHost": "127.0.0.1", "FloraPort": 3003, "FrameworkAddress": "127.0.0.1:3000", "BotID": 0, "Administrator": [0]}, ensure_ascii=False, indent=4))
+            write_flora_config.write(json.dumps(
+                {"AutoInstallLibraries": True, "ConnectionType": "HTTP", "FloraHost": "127.0.0.1", "FloraPort": 3003,
+                 "FrameworkAddress": "127.0.0.1:3000", "BotID": 0, "Administrator": [0]}, ensure_ascii=False, indent=4))
         print("已生成一个新的配置文件 Config.json , 请修改后再次启动 FloraBot")
         exit()
 
 
-def send_msg(send_type: str, msg: str, uid: str | int, gid: str | int | None, mid: str | int | None = None, ws_client=None, ws_server=None, send_host: str = "", send_port: int | str = ""):
+def send_msg(send_type: str, msg: str, uid: str | int, gid: str | int | None, mid: str | int | None = None,
+             ws_client=None, ws_server=None, send_host: str = "", send_port: int | str = ""):
     # 发送消息函数,send_type: 发送类型,决定是用HTTP还是WebSocket发送消息
     # msg: 正文,uid: ID,gid: 群号,mid: 消息编号
     # ws_client: WebSocket连接实例,ws_server: WebSocket服务端实例(若发送类型为WebSocket这两个参数必填)
@@ -222,7 +221,8 @@ def send_msg(send_type: str, msg: str, uid: str | int, gid: str | int | None, mi
             return None
 
 
-def call_api(send_type: str, api: str, params: dict, ws_client=None, ws_server=None, send_host: str = "", send_port: int | str = ""):
+def call_api(send_type: str, api: str, params: dict, ws_client=None, ws_server=None, send_host: str = "",
+             send_port: int | str = ""):
     # 发送消息函数,send_type: 发送类型,决定是用HTTP还是WebSocket发送消息
     # api: 接口(str类型), data: 数据(dict类型)
     # ws_client: WebSocket连接实例,ws_server: WebSocket服务端实例(若发送类型为WebSocket这两个参数必填)
@@ -277,18 +277,21 @@ def load_plugins():  # 加载插件函数
         if os.path.isfile(f"./{plugin_path}/Plugin.json"):
             with open(f"./{plugin_path}/Plugin.json", "r", encoding="UTF-8") as read_plugin_config:
                 plugin_config = json.loads(read_plugin_config.read())
-            if os.path.isfile(f"./{plugin_path}/{plugin_config.get('MainPyName')}.py") and plugin_config.get("EnablePlugin"):  # 如果配置正确则导入插件
+            if os.path.isfile(f"./{plugin_path}/{plugin_config.get('MainPyName')}.py") and plugin_config.get(
+                    "EnablePlugin"):  # 如果配置正确则导入插件
                 plugin_config = plugin_config.copy()
                 print(f"正在加载插件 {plugin_config.get('PluginName')} ...")
                 plugin_config.update({"ThePluginPath": plugin_path})
                 plugins_info_dict.update({plugin_config.get("PluginName"): plugin_config})  # 添加插件信息
                 if plugin_config.get("Help") is not None:
-                    plugins_help_info_dict.update({plugin_config.get("PluginName"): {"Help": plugin_config.get("Help")}})
+                    plugins_help_info_dict.update(
+                        {plugin_config.get("PluginName"): {"Help": plugin_config.get("Help")}})
                 if auto_install and plugin_config.get("DependentLibraries") is not None:
                     print("已开启自动安装依赖库, 正在安装插件所依赖的库...")
                     for libraries_name in plugin_config.get("DependentLibraries"):
                         install_libraries(libraries_name)
-                spec = importlib.util.spec_from_file_location(plugin_config.get("MainPyName"), f"./{plugin_path}/{plugin_config.get('MainPyName')}.py")
+                spec = importlib.util.spec_from_file_location(plugin_config.get("MainPyName"),
+                                                              f"./{plugin_path}/{plugin_config.get('MainPyName')}.py")
                 module = importlib.util.module_from_spec(spec)
                 try:
                     spec.loader.exec_module(module)
@@ -312,17 +315,22 @@ def load_plugins():  # 加载插件函数
     update_flora_api()
 
 
-def broadcast_event(data: dict, send_type: str, ws_client=None, ws_server=None, send_host: str = "", send_port: int | str = ""):
+def broadcast_event(data: dict, send_type: str, ws_client=None, ws_server=None, send_host: str = "",
+                    send_port: int | str = ""):
     # 广播消息函数,data: 基于OneBot协议的数据
     # send_type: 发送类型,告诉插件是用HTTP还是WebSocket发送消息
     # ws_client: WebSocket连接实例,ws_server: WebSocket服务端实例(若发送类型为WebSocket这两个参数必填)
     # send_host: HTTP协议发送地址,send_port: HTTP协议发送端口(若填这两个参数则使用自定义地址发送)
-    threading.Thread(target=builtin_function, args=(data, send_type, ws_client, ws_server, send_host, send_port)).start()
+
+    threading.Thread(target=builtin_function,
+                     args=(data, send_type, ws_client, ws_server, send_host, send_port)).start()
     send_address = {}
     if send_type == "HTTP":
-        send_address.update({"WebSocketClient": None, "WebSocketServer": None, "SendHost": send_host, "SendPort": send_port})
+        send_address.update(
+            {"WebSocketClient": None, "WebSocketServer": None, "SendHost": send_host, "SendPort": send_port})
     elif send_type == "WebSocket":
-        send_address.update({"WebSocketClient": ws_client, "WebSocketServer": ws_server, "SendHost": "", "SendPort": ""})
+        send_address.update(
+            {"WebSocketClient": ws_client, "WebSocketServer": ws_server, "SendHost": "", "SendPort": ""})
     data.update({"SendType": send_type, "SendAddress": send_address})
     for plugin in plugins_dict.values():  # 遍历开线程调用所有的插件事件函数
         try:
@@ -333,7 +341,8 @@ def broadcast_event(data: dict, send_type: str, ws_client=None, ws_server=None, 
 
 def update_flora_api():  # 更新API内容函数
     # noinspection PyTypeChecker
-    flora_api.update({"PluginsDict": plugins_dict.copy(), "PluginsInfoDict": plugins_info_dict.copy(), "HelpInfoDict": help_info_dict.copy()})
+    flora_api.update({"PluginsDict": plugins_dict.copy(), "PluginsInfoDict": plugins_info_dict.copy(),
+                      "HelpInfoDict": help_info_dict.copy()})
     for plugin in plugins_dict.values():
         try:
             plugin.flora_api.update(flora_api.copy())
@@ -346,13 +355,25 @@ def update_flora_api():  # 更新API内容函数
             pass
 
 
-def builtin_function(data: dict, send_type: str = "HTTP", ws_client=None, ws_server=None, send_host: str = "", send_port: int | str = ""):  # 一些内置的功能
+def builtin_function(data: dict, send_type: str = "HTTP", ws_client=None, ws_server=None, send_host: str = "",
+                     send_port: int | str = ""):  # 一些内置的功能
     uid = data.get("user_id")
     gid = data.get("group_id")
     mid = data.get("message_id")
     msg = data.get("raw_message")
-    if msg is not None:
-        msg = msg.replace("&#91;", "[").replace("&#93;", "]").replace("&amp;", "&").replace("&#44;", ",")  # 消息需要将URL编码替换到正确内容
+
+    _is = gid is None  # 如果 gid 为 None，直接设置 _is 为 True
+    CQ_at = f'[CQ:at,qq={data.get("self_id")}] '  # 框架输出CQ码
+
+    if not _is:
+        if msg is not None and msg.startswith(CQ_at):
+            msg = msg[len(CQ_at):]
+            _is = True
+
+    if msg is not None and _is:
+        _is = False
+        msg = msg.replace("&#91;", "[").replace("&#93;", "]").replace("&amp;", "&").replace("&#44;",
+                                                                                            ",")  # 消息需要将URL编码替换到正确内容
         if msg == "/帮助":
             send_text = f"FloraBot {flora_version}\n\n帮助菜单:\nFloraBot 内置功能:"
             for help_class in help_info_dict.get("Flora").get("Help"):
@@ -368,7 +389,8 @@ def builtin_function(data: dict, send_type: str = "HTTP", ws_client=None, ws_ser
             if help_info_dict.get("Plugins") is not None and msg in help_info_dict.get("Plugins"):
                 send_text = f"FloraBot {flora_version}\n\n帮助菜单:\n{msg}:"
                 for help_class in help_info_dict.get("Plugins").get(msg).get("Help"):
-                    if help_class.get("AdminUse") is not None and help_class.get("AdminUse") and uid not in administrator:
+                    if help_class.get("AdminUse") is not None and help_class.get(
+                            "AdminUse") and uid not in administrator:
                         continue
                     send_text += f"\n  {help_class.get('Class')}:"
                     for help_command in help_class.get("Commands"):
@@ -376,7 +398,8 @@ def builtin_function(data: dict, send_type: str = "HTTP", ws_client=None, ws_ser
                 send_text += "\n\n若要查看其他插件的帮助菜单, 请使用指令\n\"/帮助 + [空格] + [插件名]\""
                 send_msg(send_type, send_text, uid, gid, mid, ws_client, ws_server, send_host, send_port)
             else:
-                send_msg(send_type, f"未找到插件 {msg} 的帮助", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+                send_msg(send_type, f"未找到插件 {msg} 的帮助", uid, gid, mid, ws_client, ws_server, send_host,
+                         send_port)
         elif msg == "/插件列表":
             plugins = f"FloraBot {flora_version}\n\n插件列表:\n"
             for plugin_info in plugins_info_dict.values():
@@ -417,19 +440,24 @@ subprocess.Popen([sys.executable, os.path.join(target_dir, "FloraBot.py")])
 """
 
 
-def admin_function(msg: str, uid: str | int, gid: str | int | None, mid: str | int | None = None, send_type: str = "HTTP", ws_client=None, ws_server=None, send_host: str = "", send_port: int | str = ""):  # 一些内置的功能
+def admin_function(msg: str, uid: str | int, gid: str | int | None, mid: str | int | None = None,
+                   send_type: str = "HTTP", ws_client=None, ws_server=None, send_host: str = "",
+                   send_port: int | str = ""):  # 一些内置的功能
     global update_flora
     if msg == "/重载插件":
         send_msg(send_type, "正在重载插件, 请稍后...", uid, gid, mid, ws_client, ws_server)
         load_plugins()
-        send_msg(send_type, f"FloraBot {flora_version}\n\n插件重载完成, 共有 {len(plugins_info_dict)} 个插件, 已启用 {len(plugins_dict)} 个插件", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+        send_msg(send_type,
+                 f"FloraBot {flora_version}\n\n插件重载完成, 共有 {len(plugins_info_dict)} 个插件, 已启用 {len(plugins_dict)} 个插件",
+                 uid, gid, mid, ws_client, ws_server, send_host, send_port)
     elif msg.startswith("/启用插件 "):
         msg = msg.replace("/启用插件 ", "", 1)
         if plugins_info_dict.get(msg) is not None and not plugins_info_dict.get(msg).get("EnablePlugin"):
             plugin_info = plugins_info_dict.get(msg)
             plugin_info.update({"EnablePlugin": True})
             plugins_info_dict.update({msg: plugin_info})
-            spec = importlib.util.spec_from_file_location(plugin_info.get("MainPyName"), f"./{plugin_info.get('ThePluginPath')}/{plugin_info.get('MainPyName')}.py")
+            spec = importlib.util.spec_from_file_location(plugin_info.get("MainPyName"),
+                                                          f"./{plugin_info.get('ThePluginPath')}/{plugin_info.get('MainPyName')}.py")
             module = importlib.util.module_from_spec(spec)
             try:
                 spec.loader.exec_module(module)
@@ -450,13 +478,18 @@ def admin_function(msg: str, uid: str | int, gid: str | int | None, mid: str | i
                 pass
             plugins_dict.update({plugin_info.get("PluginName"): module})
             update_flora_api()
-            with open(f"./{plugin_info.get('ThePluginPath')}/Plugin.json", "w", encoding="UTF-8") as write_plugin_config:
+            with open(f"./{plugin_info.get('ThePluginPath')}/Plugin.json", "w",
+                      encoding="UTF-8") as write_plugin_config:
                 plugin_info_copy = plugin_info.copy()
                 plugin_info_copy.pop("ThePluginPath")
                 write_plugin_config.write(json.dumps(plugin_info_copy, ensure_ascii=False, indent=4))
-            send_msg(send_type, f"FloraBot {flora_version}\n\n插件 {msg} 已启用, 共有 {len(plugins_info_dict)} 个插件, 已启用 {len(plugins_dict)} 个插件", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+            send_msg(send_type,
+                     f"FloraBot {flora_version}\n\n插件 {msg} 已启用, 共有 {len(plugins_info_dict)} 个插件, 已启用 {len(plugins_dict)} 个插件",
+                     uid, gid, mid, ws_client, ws_server, send_host, send_port)
         else:
-            send_msg(send_type, f"FloraBot {flora_version}\n\n未找到或已启用插件 {msg} , 若未找到插件, 但插件文件已添加, 请试试使用 \"/重载插件\"", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+            send_msg(send_type,
+                     f"FloraBot {flora_version}\n\n未找到或已启用插件 {msg} , 若未找到插件, 但插件文件已添加, 请试试使用 \"/重载插件\"",
+                     uid, gid, mid, ws_client, ws_server, send_host, send_port)
     elif msg.startswith("/禁用插件 "):
         msg = msg.replace("/禁用插件 ", "", 1)
         if plugins_info_dict.get(msg) is not None and plugins_info_dict.get(msg).get("EnablePlugin"):
@@ -466,13 +499,18 @@ def admin_function(msg: str, uid: str | int, gid: str | int | None, mid: str | i
             if plugins_dict.get(msg) is not None:
                 plugins_dict.pop(msg)
             update_flora_api()
-            with open(f"./{plugin_info.get('ThePluginPath')}/Plugin.json", "w", encoding="UTF-8") as write_plugin_config:
+            with open(f"./{plugin_info.get('ThePluginPath')}/Plugin.json", "w",
+                      encoding="UTF-8") as write_plugin_config:
                 plugin_info_copy = plugin_info.copy()
                 plugin_info_copy.pop("ThePluginPath")
                 write_plugin_config.write(json.dumps(plugin_info_copy, ensure_ascii=False, indent=4))
-            send_msg(send_type, f"FloraBot {flora_version}\n\n插件 {msg} 已禁用, 共有 {len(plugins_info_dict)} 个插件, 已启用 {len(plugins_dict)} 个插件", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+            send_msg(send_type,
+                     f"FloraBot {flora_version}\n\n插件 {msg} 已禁用, 共有 {len(plugins_info_dict)} 个插件, 已启用 {len(plugins_dict)} 个插件",
+                     uid, gid, mid, ws_client, ws_server, send_host, send_port)
         else:
-            send_msg(send_type, f"FloraBot {flora_version}\n\n未找到或已禁用插件 {msg} , 若未找到插件, 但插件文件已添加, 请试试使用 \"/重载插件\"", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+            send_msg(send_type,
+                     f"FloraBot {flora_version}\n\n未找到或已禁用插件 {msg} , 若未找到插件, 但插件文件已添加, 请试试使用 \"/重载插件\"",
+                     uid, gid, mid, ws_client, ws_server, send_host, send_port)
     elif msg.startswith("/echo "):
         send_msg(send_type, msg.replace("/echo ", "", 1), uid, gid, mid, ws_client, ws_server, send_host, send_port)
     elif msg.startswith("/echo1 "):
@@ -488,8 +526,11 @@ def admin_function(msg: str, uid: str | int, gid: str | int | None, mid: str | i
                     try:
                         call_params = json.loads(search_params)
                     except json.JSONDecodeError:
-                        send_msg(send_type, "参数错误, 参数不是标准的 Json 格式", uid, gid, mid, ws_client, ws_server, send_host, send_port)
-            send_msg(send_type, json.dumps(call_api(send_type, search_api, call_params, ws_client, ws_server, send_host, send_port), ensure_ascii=False, indent=4), uid, gid, mid, ws_client, ws_server,send_host, send_port)
+                        send_msg(send_type, "参数错误, 参数不是标准的 Json 格式", uid, gid, mid, ws_client, ws_server,
+                                 send_host, send_port)
+            send_msg(send_type, json.dumps(
+                call_api(send_type, search_api, call_params, ws_client, ws_server, send_host, send_port),
+                ensure_ascii=False, indent=4), uid, gid, mid, ws_client, ws_server, send_host, send_port)
     elif msg == "/检查更新":
         if not update_flora:
             if len(update_request_id) != 0:
@@ -498,9 +539,12 @@ def admin_function(msg: str, uid: str | int, gid: str | int | None, mid: str | i
                     update_flora = False
             if len(update_request_id) == 0:
                 update_request_id.extend([uid, time.time()])
-                send_msg(send_type, "请选择一个 GitHub 源:\n1. 官方源(github.com)\n2. gh.llkk.cc\n3. github.moeyy.xyz\n4. mirror.ghproxy.com\n5. ghproxy.net\n6. gh.ddlc.top\n\n下一步请在一分钟之内发送以下格式的指令:\n/GitHub源 + [空格] + [序号(1~6)]", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+                send_msg(send_type,
+                         "请选择一个 GitHub 源:\n1. 官方源(github.com)\n2. gh.llkk.cc\n3. github.moeyy.xyz\n4. mirror.ghproxy.com\n5. ghproxy.net\n6. gh.ddlc.top\n\n下一步请在一分钟之内发送以下格式的指令:\n/GitHub源 + [空格] + [序号(1~6)]",
+                         uid, gid, mid, ws_client, ws_server, send_host, send_port)
             else:
-                send_msg(send_type, "已经有 Bot 管理员发起了更新请求, 请稍等一会", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+                send_msg(send_type, "已经有 Bot 管理员发起了更新请求, 请稍等一会", uid, gid, mid, ws_client, ws_server,
+                         send_host, send_port)
         else:
             send_msg(send_type, "FloraBot 正在执行步骤", uid, gid, mid, ws_client, ws_server, send_host, send_port)
     elif msg.startswith("/GitHub源 ") and len(update_request_id) != 0 and not update_flora:
@@ -515,27 +559,36 @@ def admin_function(msg: str, uid: str | int, gid: str | int | None, mid: str | i
                 download_source = ""
                 msg = int(msg)
                 if msg == 1:
-                    send_msg(send_type, "你选择了 1, 即将使用 官方 源", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+                    send_msg(send_type, "你选择了 1, 即将使用 官方 源", uid, gid, mid, ws_client, ws_server, send_host,
+                             send_port)
                 elif msg == 2:
                     download_source = "https://gh.llkk.cc/"
-                    send_msg(send_type, "你选择了 2, 即将使用 gh.llkk.cc 镜像源", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+                    send_msg(send_type, "你选择了 2, 即将使用 gh.llkk.cc 镜像源", uid, gid, mid, ws_client, ws_server,
+                             send_host, send_port)
                 elif msg == 3:
                     download_source = "https://github.moeyy.xyz/"
-                    send_msg(send_type, "你选择了 3, 即将使用 github.moeyy.xyz 镜像源", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+                    send_msg(send_type, "你选择了 3, 即将使用 github.moeyy.xyz 镜像源", uid, gid, mid, ws_client,
+                             ws_server, send_host, send_port)
                 elif msg == 4:
                     download_source = "https://mirror.ghproxy.com/"
-                    send_msg(send_type, "你选择了 4, 即将使用 mirror.ghproxy.com 镜像源", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+                    send_msg(send_type, "你选择了 4, 即将使用 mirror.ghproxy.com 镜像源", uid, gid, mid, ws_client,
+                             ws_server, send_host, send_port)
                 elif msg == 5:
                     download_source = "https://ghproxy.net/"
-                    send_msg(send_type, "你选择了 5, 即将使用 ghproxy.net 镜像源", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+                    send_msg(send_type, "你选择了 5, 即将使用 ghproxy.net 镜像源", uid, gid, mid, ws_client, ws_server,
+                             send_host, send_port)
                 elif msg == 6:
                     download_source = "https://gh.ddlc.top/"
-                    send_msg(send_type, "你选择了 6, 即将使用 gh.ddlc.top 镜像源", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+                    send_msg(send_type, "你选择了 6, 即将使用 gh.ddlc.top 镜像源", uid, gid, mid, ws_client, ws_server,
+                             send_host, send_port)
                 else:
                     update_flora = False
-                    send_msg(send_type, "参数错误, 序号的范围应该为 1~6\n正确的指令格式为:\n/GitHub源 + [空格] + [序号(1~6)]", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+                    send_msg(send_type,
+                             "参数错误, 序号的范围应该为 1~6\n正确的指令格式为:\n/GitHub源 + [空格] + [序号(1~6)]", uid,
+                             gid, mid, ws_client, ws_server, send_host, send_port)
                 if 1 <= msg <= 6:
-                    send_msg(send_type, "开始检查更新 FloraBot, 请稍后...", uid, gid, None, ws_client, ws_server, send_host, send_port)
+                    send_msg(send_type, "开始检查更新 FloraBot, 请稍后...", uid, gid, None, ws_client, ws_server,
+                             send_host, send_port)
                     try:
                         update_request_id.append(download_source)
                         response = requests.get(download_source + file_source)
@@ -549,54 +602,70 @@ def admin_function(msg: str, uid: str | int, gid: str | int | None, mid: str | i
                                     get_update_content = get_update_content.group(1)
                                 else:
                                     get_update_content = "未获取到更新日志"
-                                send_msg(send_type, f"检查到 FloraBot 有新的版本, 当前版本为 {flora_version}, 最新版本为 {get_version}, 更新内容:\n{get_update_content}", uid, gid, None, ws_client, ws_server, send_host, send_port)
+                                send_msg(send_type,
+                                         f"检查到 FloraBot 有新的版本, 当前版本为 {flora_version}, 最新版本为 {get_version}, 更新内容:\n{get_update_content}",
+                                         uid, gid, None, ws_client, ws_server, send_host, send_port)
                                 is_big_update = re.search(r"\bbig_update\s*=\s*True\b", response.text)
                                 send_text = ""
                                 if is_big_update is not None:
                                     send_text = "更新到最新版本为大更新, 可能会出现插件功能失效等问题\n\n"
                                 send_text += "确认要更新到最新版吗?\n\n下一步请在一分钟之内发送以下指令:\n/确认更新"
                                 update_request_id[1] = time.time()
-                                send_msg(send_type, send_text, uid, gid, mid, ws_client, ws_server, send_host, send_port)
+                                send_msg(send_type, send_text, uid, gid, mid, ws_client, ws_server, send_host,
+                                         send_port)
                             else:
                                 update_flora = False
-                                send_msg(send_type, f"FloraBot 当前已是最新版本", uid, gid, None, ws_client, ws_server, send_host, send_port)
+                                send_msg(send_type, f"FloraBot 当前已是最新版本", uid, gid, None, ws_client, ws_server,
+                                         send_host, send_port)
                         else:
                             update_flora = False
-                            send_msg(send_type, f"FloraBot 检查更新失败, 获取版本号失败", uid, gid, None, ws_client, ws_server, send_host, send_port)
+                            send_msg(send_type, f"FloraBot 检查更新失败, 获取版本号失败", uid, gid, None, ws_client,
+                                     ws_server, send_host, send_port)
                     except requests.RequestException as error_info:
                         update_flora = False
-                        send_msg(send_type, f"FloraBot 检查更新失败, 网络请求出现异常, 详细信息: {error_info}", uid, gid, None, ws_client, ws_server, send_host, send_port)
+                        send_msg(send_type, f"FloraBot 检查更新失败, 网络请求出现异常, 详细信息: {error_info}", uid,
+                                 gid, None, ws_client, ws_server, send_host, send_port)
             except ValueError:
                 update_flora = False
-                send_msg(send_type, "参数错误, 这好像不是序号吧\n正确的指令格式为:\n/GitHub源 + [空格] + [序号(1~6)]", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+                send_msg(send_type, "参数错误, 这好像不是序号吧\n正确的指令格式为:\n/GitHub源 + [空格] + [序号(1~6)]",
+                         uid, gid, mid, ws_client, ws_server, send_host, send_port)
     elif msg == "/确认更新" and len(update_request_id) != 0 and update_flora:
         if time.time() - update_request_id[1] > 60:
             update_request_id.clear()
             update_flora = False
         if len(update_request_id) != 0 and uid == update_request_id[0]:
-            send_msg(send_type, "开始更新 FloraBot, 请稍后...", uid, gid, mid, ws_client, ws_server, send_host, send_port)
+            send_msg(send_type, "开始更新 FloraBot, 请稍后...", uid, gid, mid, ws_client, ws_server, send_host,
+                     send_port)
             try:
                 send_msg(send_type, "开始下载 FloraBot ...", uid, gid, None, ws_client, ws_server, send_host, send_port)
-                response = requests.get(update_request_id[2] + "https://github.com/FloraBotTeam/FloraBot/archive/main.zip")
+                response = requests.get(
+                    update_request_id[2] + "https://github.com/FloraBotTeam/FloraBot/archive/main.zip")
                 response.raise_for_status()
                 if not os.path.isdir("./FloraBot/UpdateCache"):
                     os.makedirs("./FloraBot/UpdateCache")
                 with open("./FloraBot/UpdateCache/FloraBot.zip", "wb") as flora_file:
                     flora_file.write(response.content)
-                send_msg(send_type, "FloraBot 下载完成, 开始解压 FloraBot ...", uid, gid, None, ws_client, ws_server, send_host, send_port)
+                send_msg(send_type, "FloraBot 下载完成, 开始解压 FloraBot ...", uid, gid, None, ws_client, ws_server,
+                         send_host, send_port)
                 zip_object = zipfile.ZipFile("./FloraBot/UpdateCache/FloraBot.zip")
                 for file in zip_object.namelist():
                     zip_object.extract(file, "./FloraBot/UpdateCache")
                 zip_object.close()
                 os.remove("./FloraBot/UpdateCache/FloraBot.zip")
                 shutil.rmtree(f"./FloraBot/UpdateCache/FloraBot-main/PluginTemplate")
-                send_msg(send_type, "FloraBot 解压完成, 开始更新依赖的库...", uid, gid, None, ws_client, ws_server, send_host, send_port)
+                send_msg(send_type, "FloraBot 解压完成, 开始更新依赖的库...", uid, gid, None, ws_client, ws_server,
+                         send_host, send_port)
                 try:
-                    subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "./FloraBot/UpdateCache/FloraBot-main/requirements.txt"])
+                    subprocess.check_call([sys.executable, "-m", "pip", "install", "-r",
+                                           "./FloraBot/UpdateCache/FloraBot-main/requirements.txt"])
                     os.remove("./FloraBot/UpdateCache/FloraBot-main/requirements.txt")
-                    send_msg(send_type, "依赖的库更新完成, 开始替换更新 FloraBot, 这将会重启 FloraBot, FloraBot 重启后即为更新完成", uid, gid, None, ws_client, ws_server, send_host, send_port)
+                    send_msg(send_type,
+                             "依赖的库更新完成, 开始替换更新 FloraBot, 这将会重启 FloraBot, FloraBot 重启后即为更新完成",
+                             uid, gid, None, ws_client, ws_server, send_host, send_port)
                 except subprocess.CalledProcessError:
-                    send_msg(send_type, "依赖的库更新失败, 跳过更新依赖的库, 开始替换更新 FloraBot, 这将会重启 FloraBot, FloraBot 重启后即为更新完成", uid, gid, None, ws_client, ws_server, send_host, send_port)
+                    send_msg(send_type,
+                             "依赖的库更新失败, 跳过更新依赖的库, 开始替换更新 FloraBot, 这将会重启 FloraBot, FloraBot 重启后即为更新完成",
+                             uid, gid, None, ws_client, ws_server, send_host, send_port)
                 with open("./FloraBot/UpdateCache/FloraUpdater.py", "w") as flora_updater:
                     flora_updater.write(flora_updater_py)
                 subprocess.Popen([sys.executable, "./FloraBot/UpdateCache/FloraUpdater.py"])
@@ -605,7 +674,8 @@ def admin_function(msg: str, uid: str | int, gid: str | int | None, mid: str | i
                 os._exit(0)
             except requests.RequestException as error_info:
                 update_flora = False
-                send_msg(send_type, f"FloraBot 更新失败, 网络请求出现异常, 详细信息: {error_info}", uid, gid, None, ws_client, ws_server, send_host, send_port)
+                send_msg(send_type, f"FloraBot 更新失败, 网络请求出现异常, 详细信息: {error_info}", uid, gid, None,
+                         ws_client, ws_server, send_host, send_port)
 
 
 @flora_server.post("/")
@@ -626,7 +696,8 @@ def ws_message_received(client, server, message):  # WebSocket消息接收函数
         if "status" in data and len(call_api_return) != 0:
             call_api_returned.update({call_api_return.pop(0): data})
         elif data.get("meta_event_type") != "heartbeat":
-            threading.Thread(target=broadcast_event, args=(data, "WebSocket", client, server)).start()  # 遍历开线程调用所有的插件事件函数
+            threading.Thread(target=broadcast_event,
+                             args=(data, "WebSocket", client, server)).start()  # 遍历开线程调用所有的插件事件函数
     except json.JSONDecodeError:
         pass
 
@@ -734,8 +805,11 @@ def reboot():
     pass
 
 
-flora_api = {"FloraPath": os.path.dirname(os.path.abspath(__file__)), "ConnectionType": connection_type, "FloraHost": flora_host, "FloraPort": flora_port, "FrameworkAddress": framework_address, "BotID": bot_id, "Administrator": administrator, "FloraVersion": flora_version, "FloraServer": flora_server, "CallApiReturned": call_api_returned, "UpdateFloraApi": update_flora_api, "LoadPlugins": load_plugins, "BroadcastEvent": broadcast_event, "SendMsg": send_msg, "CallApi": call_api}
-
+flora_api = {"FloraPath": os.path.dirname(os.path.abspath(__file__)), "ConnectionType": connection_type,
+             "FloraHost": flora_host, "FloraPort": flora_port, "FrameworkAddress": framework_address, "BotID": bot_id,
+             "Administrator": administrator, "FloraVersion": flora_version, "FloraServer": flora_server,
+             "CallApiReturned": call_api_returned, "UpdateFloraApi": update_flora_api, "LoadPlugins": load_plugins,
+             "BroadcastEvent": broadcast_event, "SendMsg": send_msg, "CallApi": call_api}
 
 if __name__ == "__main__":
     print(flora_logo)
@@ -744,9 +818,11 @@ if __name__ == "__main__":
     load_config()
     print(f"欢迎使用 FloraBot {flora_version}")
     if use_ansi_color:
-        print("\033[93m声明: 插件为第三方内容, 请您自行分辨是否为恶意插件, 若被恶意插件入侵/破坏了您的设备或恶意盗取了您的信息, 造成的损失请自负, FloraBotTeam 概不负责也无义务负责!!!\033[0m")
+        print(
+            "\033[93m声明: 插件为第三方内容, 请您自行分辨是否为恶意插件, 若被恶意插件入侵/破坏了您的设备或恶意盗取了您的信息, 造成的损失请自负, FloraBotTeam 概不负责也无义务负责!!!\033[0m")
     else:
-        print("声明: 插件为第三方内容, 请您自行分辨是否为恶意插件, 若被恶意插件入侵/破坏了您的设备或恶意盗取了您的信息, 造成的损失请自负, FloraBotTeam 概不负责也无义务负责!!!")
+        print(
+            "声明: 插件为第三方内容, 请您自行分辨是否为恶意插件, 若被恶意插件入侵/破坏了您的设备或恶意盗取了您的信息, 造成的损失请自负, FloraBotTeam 概不负责也无义务负责!!!")
     load_plugins()
     print(f"框架连接方式为: {connection_type}")
     if connection_type == "HTTP":
