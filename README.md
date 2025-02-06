@@ -16,18 +16,19 @@ apt install python3
 ```Shell
 python FloraBot.py
 ```
-**然后保存, 再重命名文件, 将后缀名 `.txt` 改为 `.bat`双击运行一下**  
-**若无法运行, 找到你安装 Python 的路径, 再找到 `python.exe` 将脚本内容改为**  
+**然后保存, 再重命名文件, 将后缀名 `.txt` 改为 `.bat` 双击运行一下, 如果 Python 提示报错则说明脚本是正确的, 然后需要安装库**  
+**若无法运行 Python, 找到你安装 Python 的路径, 再找到 `python.exe` 将脚本内容改为**  
 ```Shell
 python.exe的绝对路径 FloraBot.py
 ```
-**保存然后再运行**  
+**保存再试一下**  
 **如果是 Linux 用户, 在文件 `FloraBot.py` 的同级目录可创建一个后缀名为 `.sh` 的文件, 内容为**  
 ```Shell
 python3 FloraBot.py
 ```
 **使用 python3 命令不一定可以运行, 可改为一个指定的版本, 如 python3.11**  
 **安装必要的库:**  
+**打开终端, Windows 使用 CMD 或者 PowerShell**  
 **若想一行指令安装所有必要库, 运行以下命令:**  
 ```Shell
 pip install -r requirements.txt文件所在路径
@@ -46,7 +47,7 @@ pip install requests
 pip install websocket-server
 ```
 **使用 pip 命令不一定可以运行, 可尝试将 pip 换成 python3 -m pip**  
-**运行脚本**  
+**运行脚本启动**  
 5. **首次启动会启动失败, 此时会在文件 `FloraBot.py` 的同级目录下生成一个 `Config.json` 文件, 编辑它**
 ## 配置
 **`Config.json`:**  
