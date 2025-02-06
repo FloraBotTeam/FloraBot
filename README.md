@@ -10,7 +10,7 @@
 apt install python3
 ```
 **可将 python3 改为一个指定的版本, 如作者喜欢用的 python3.11**  
-2. **点击右上角 About 左边的绿色的 `Code` 按钮, 再点击 `Download ZIP` 下载亦或者通过链接下载[`https://github.com/FloraBotTeam/FloraBot/archive/main.zip`](https://github.com/FloraBotTeam/FloraBot/archive/main.zip)**  
+2. **点击右上角 About 左边的绿色的 `Code` 按钮, 再点击 `Download ZIP` 下载亦或者通过链接下载(请 clone 仓库, 不要使用 release 的版本, 因为它过于老旧)[`https://github.com/FloraBotTeam/FloraBot/archive/main.zip`](https://github.com/FloraBotTeam/FloraBot/archive/main.zip)**  
 3. **用户解压后可删去 `PluginTemplate` 文件夹, 开发者可保留**  
 4. **如果是 Windows 用户, 在文件 `FloraBot.py` 的同级目录可创建一个文本文档, 内容为**  
 ```Shell
