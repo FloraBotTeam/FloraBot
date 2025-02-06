@@ -1,10 +1,23 @@
 {
     "PluginName": "插件名",
+    "PluginVersion": "插件版本",
     "DependentLibraries": null,
     "IsLibraries": false,
     "PluginIcon": null,
-    "PluginAuthor": "插件作者",
+    "PluginAuthor": "插件作者名",
     "MainPyName": "插件主 .py 文件名, 不要带上 .py 后缀名",
     "PluginDescription": "插件描述",
-    "EnablePlugin": true
+    "EnablePlugin": true,
+
+    "Help": [
+        {
+            "Class": "分类",
+            "Commands": [
+                {
+                    "Command": "指令",
+                    "Content": "指令介绍"
+                }
+            ]
+        }
+    ]
 }
