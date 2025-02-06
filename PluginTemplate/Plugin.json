@@ -1,5 +1,6 @@
 {
     "PluginName": "插件名",
+    "PluginVersion": "插件版本",
     "DependentLibraries": null,
     "IsLibraries": false,
     "PluginIcon": null,
