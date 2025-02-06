@@ -2,7 +2,7 @@
 **一个新的, 使用 Python 编写的支持插件的 ChatBot**
 ## 官方文档(更新可能不及时, 建议耐心查看仓库文档)
 * **[`https://florabotteam.github.io`](https://florabotteam.github.io)**
-## 一键安装脚本
+## 一键安装脚本(能手动安装的还是手动安装吧, 尤其是 Linux 用户)
 **[`https://github.com/FloraBotTeam/FloraBot-Installer`](https://github.com/FloraBotTeam/FloraBot-Installer)**
 ## 食用方法(面向小白)
 1. **Windows: 前往 [`Python官网`](https://www.python.org/downloads) 下载不低于 `Python3.11` 的版本进行安装, Linux: 运行命令**
