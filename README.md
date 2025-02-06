@@ -120,6 +120,7 @@ FloraBot.py
 ```Json
 {
     "PluginName": "插件名",
+    "PluginVersion": "插件版本",
     "DependentLibraries": null,
     "IsLibraries": false,
     "PluginIcon": null,
@@ -143,6 +144,7 @@ FloraBot.py
 ```
 **`Plugin.json` 文件键值对照表:**  
 * **`PluginName`: 插件名**  
+* **`PluginVersion`: 插件版本**  
 * **`DependentLibraries`: 依赖的第三方库的名称, 若 `AutoInstallLibraries` 值为 `true` 则会尝试自动安装这些库, 格式为: `["库名", "库名", ...]`**  
 * **`IsLibraries`: 是否为依赖库插件**  
 * **`PluginIcon`: 插件的图标, 格式为: `xxx.png`(要带上后缀, 主流文件格式即可, 可以在文件夹下, 但是相对路径是从 `Plugin.json` 文件所在的目录开始的)**  
