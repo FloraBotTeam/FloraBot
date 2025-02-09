@@ -1,4 +1,4 @@
--i https://pypi.tuna.tsinghua.edu.cn/simple
+-i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
 requests
 flask
 websocket-server
