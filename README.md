@@ -326,6 +326,7 @@ def event(data: dict):  # 事件函数,FloraBot每收到一个事件都会调用
 **主要作者:**  
 * **[`AEBC08`](https://github.com/AEBC08)**
 * **BiliBili: [`AEBC08`](https://space.bilibili.com/510197857)**  
+<br>
 **QQ群(仅供开发者加入): [`994825372`](http://qm.qq.com/cgi-bin/qm/qr?group_code=994825372)**
 ### Tips
 * **作者没什么时间, 如有疑问或建议可提交 Issues**
